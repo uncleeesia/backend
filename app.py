@@ -7,7 +7,7 @@ CORS(app)
 
 @app.route("/")
 def home():
-    return "Hello from Flask!"
+    return ({message:"Hello from Flask!"})
 
 if __name__ == "__main__":
     app.run()
