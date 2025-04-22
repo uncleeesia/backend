@@ -7,8 +7,7 @@ CORS(app)
 
 @app.route("/")
 def home():
-    data = {"message": "Hello from Flask!"}
-    return jsonify(data)
+    return jsonify({"message": "Hello from Flask!"}),200
 
 if __name__ == "__main__":
     app.run()
