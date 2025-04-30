@@ -20,7 +20,8 @@ def get_preferences():
         "budgetHigh": False,
         "rating4": True,
         "rating5": False,
-        "reviews50": True
+        "reviews50": False,
+        "reviews200": True
     }
     return jsonify({"preferences": preferences}), 200
 
