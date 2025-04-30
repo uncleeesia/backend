@@ -10,7 +10,19 @@ def home():
 
 @app.route("/api/getPreferences", methods=["GET"])
 def get_preferences():
-    return jsonify({"preferences": {}}), 200
+    preferences = {
+        "id":1,
+        "notifications": True,
+        "theme": "dark",
+        "language": "english",
+        "budgetLow": True,
+        "budgetMid": False,
+        "budgetHigh": False,
+        "rating4": True,
+        "rating5": False,
+        "reviews50": True
+    }
+    return jsonify({"preferences": preferences}), 200
 
 @app.route("/api/getServices", methods=["GET"])
 def get_services():
