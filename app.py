@@ -1,28 +1,45 @@
+import psycopg2
 from flask import Flask, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
 
+conn = psycopg2.connect("postgres://u8dd30h9brbpjq:pf3390a930040c9e19e9c5ce482dcfbf829ee969f2ed886456eef7dc3a9519e88@ce0lkuo944ch99.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/d3tpurv791l296", sslmode='require')
+cursor = conn.cursor()
+
+
 @app.route("/", methods=["GET"])
 def home():
+    cursor.execute("SELECT 1")
+    myresult = cursor.fetchall()
+
+    for x in myresult:
+        print(x)
+    
     return jsonify({"message": "Hello from Flask!"}), 200
 
 @app.route("/api/getPreferences", methods=["GET"])
 def get_preferences():
-    preferences = {
-        "id":1,
-        "notifications": True,
-        "theme": "dark",
-        "language": "english",
-        "budgetLow": True,
-        "budgetMid": False,
-        "budgetHigh": False,
-        "rating4": True,
-        "rating5": False,
-        "reviews50": False,
-        "reviews200": True
-    }
+    # preferences = {
+    #     "id":1,
+    #     "notifications": True,
+    #     "theme": "dark",
+    #     "language": "english",
+    #     "budgetLow": True,
+    #     "budgetMid": False,
+    #     "budgetHigh": False,
+    #     "rating4": True,
+    #     "rating5": False,
+    #     "reviews50": False,
+    #     "reviews200": True
+    # }
+    preferences={}
+    return jsonify({"preferences": preferences}), 200
+
+@app.route("/api/UpdatePreferences", methods=["POST"])
+def update_preferences(preferences):
+    # logic to update
     return jsonify({"preferences": preferences}), 200
 
 @app.route("/api/getServices", methods=["GET"])
@@ -94,6 +111,48 @@ def get_services():
     ]
     
     return jsonify({"services": services}), 200
+
+@app.route("/api/getReviews", methods=["GET"])
+def get_reviews():
+    #some logic to get reviews tagged to specific services
+    reviews = [
+        {
+            "id": 1,
+            "serviceId": 1,
+            "author": "Alice",
+            "rating": 5,
+            "review": "Excellent service!",
+            "date": "2023-10-01",
+        },{
+            "id": 2,
+            "serviceId": 1,
+            "author": "alicia",
+            "rating": 3,
+            "review": "moderate service!",
+            "date": "2023-10-01",
+        },{
+            "id": 3,
+            "serviceId": 1,
+            "author": "coconut",
+            "rating": 3,
+            "review": "moderate service!",
+            "date": "2023-10-01",
+        },{
+            "id": 4,
+            "serviceId": 1,
+            "author": "apple",
+            "rating": 3,
+            "review": "moderate service!",
+            "date": "2023-10-01",
+        },{
+            "id": 5,
+            "serviceId": 1,
+            "author": "orange",
+            "rating": 3,
+            "review": "moderate service!",
+            "date": "2023-10-01",
+        }]
+    return jsonify({"reviews": reviews}), 200
 
 if __name__ == "__main__":
     app.run()
