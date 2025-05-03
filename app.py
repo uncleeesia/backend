@@ -3,7 +3,7 @@ from flask_cors import CORS
 import psycopg2
 
 app = Flask(__name__)
-CORS(app, origins="/*")
+CORS(app)
 
 conn = psycopg2.connect("postgres://u8dd30h9brbpjq:pf3390a930040c9e19e9c5ce482dcfbf829ee969f2ed886456eef7dc3a9519e88@ce0lkuo944ch99.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/d3tpurv791l296", sslmode='require')
 cursor = conn.cursor()
