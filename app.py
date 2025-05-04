@@ -22,7 +22,7 @@ def home():
     
     return jsonify({"message": "Hello from Flask!"}), 200
 
-@app.route("/api/getPreferences", methods=["GET"])
+@app.route("api/getPreferences", methods=["GET"])
 def get_preferences():
     # preferences = {
     #     "id":1,
