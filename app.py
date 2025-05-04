@@ -23,6 +23,17 @@ def home():
     
     return jsonify({"message": "Hello from Flask!"}), 200
 
+@app.route("/api/routes", methods=["GET"])
+def list_routes():
+    output = []
+    for rule in app.url_map.iter_rules():
+        methods = ','.join(rule.methods)
+        output.append({
+            'endpoint': rule.endpoint,
+            'methods': methods,
+            'rule': str(rule)
+        })
+    return jsonify(output)
 
 @app.route("/api/getPreferences", methods=["GET"])
 def get_preferences():
