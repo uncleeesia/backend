@@ -11,9 +11,6 @@ cursor = conn.cursor()
 logging.basicConfig(level=logging.INFO)
 @app.route("/", methods=["GET"])
 def home():
-    app.logger.info(f"URL: {request.url}")
-    app.logger.info(f"Method: {request.method}")
-    app.logger.info(f"Headers: {request.headers}")
     cursor.execute("SELECT 1")
     myresult = cursor.fetchall()
 
@@ -21,8 +18,12 @@ def home():
         print(x)
     
     return jsonify({"message": "Hello from Flask!"}), 200
-
-@app.route("api/getPreferences", methods=["GET"])
+app.logger.info(f"URL: {request.url}")
+app.logger.info(f"Method: {request.method}")
+app.logger.info(f"Headers: {request.headers}")
+print(request.url)
+print(request.method)
+@app.route("/api/getPreferences", methods=["GET"])
 def get_preferences():
     # preferences = {
     #     "id":1,
