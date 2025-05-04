@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 import psycopg2
 
@@ -10,6 +10,9 @@ cursor = conn.cursor()
 
 @app.route("/", methods=["GET"])
 def home():
+    print(f"URL: {request.url}")
+    print(f"Method: {request.method}")
+    print(f"Headers: {request.headers}")
     cursor.execute("SELECT 1")
     myresult = cursor.fetchall()
 
