@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS "softwareDev_schema".general_user
     removed_count integer NOT NULL DEFAULT 0,
     favourite_list jsonb,
     unstruct_data jsonb,
+    picture_url text,
     CONSTRAINT general_user_pkey PRIMARY KEY (user_id)
 );
 
@@ -54,7 +55,7 @@ CREATE TABLE IF NOT EXISTS "softwareDev_schema".payment
     from_user_id bigint NOT NULL,
     to_user_id bigint NOT NULL,
     is_completed boolean,
-    payment_timestamp timestamp(3) without time zone NOT NULL,
+    payment_timestamp timestamp(3) with time zone NOT NULL,
     CONSTRAINT payment_pkey PRIMARY KEY (payment_id)
 );
 
@@ -62,11 +63,12 @@ CREATE TABLE IF NOT EXISTS "softwareDev_schema".service
 (
     service_id bigserial NOT NULL,
     user_id bigint NOT NULL,
-    from_date timestamp(3) without time zone,
-    to_date timestamp(3) without time zone,
+    from_date timestamp(3) with time zone,
+    to_date timestamp(3) with time zone,
     view_count integer DEFAULT 0,
     engagement_count integer DEFAULT 0,
-    caategory_tags jsonb,
+    category_tags jsonb,
+    picture_url text,
     CONSTRAINT service_pkey PRIMARY KEY (service_id)
 );
 

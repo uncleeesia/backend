@@ -2,47 +2,10 @@ import json
 
 from argon2 import PasswordHasher
 from logging import Logger
-from typing import Any
-from pydantic import BaseModel, Field, field_validator
 from datetime import datetime
 from dbtalker_psql import DBTalker
 from psycopg import sql
-
-class Gen_User(BaseModel):
-
-    user_id: int
-    username: str
-    email: str
-    password: str
-    phone_num: str
-    notification_method: int = 1
-    payment_method: int = 0
-    hidden_count: int = 0
-    removed_count: int = 0
-    favourite_list: dict[str, Any] | None = None
-    unstruct_data: dict[str, Any] | None = None
-
-    @field_validator('username')
-    def enforce_username(cls, v: str):
-
-        if v.__len__ > 20 and v.__len__ < 5:
-
-            raise Exception("The length of 'username' must be more than 5 and less than 20, please try again")
-        
-    @field_validator('password')
-    def enforce_password(cls, v: str):
-
-        if v.__len__ < 8 and v.__len__ > 20:
-
-            raise Exception("The length of 'password' must be more than 8 and less than 20")
-        
-    @field_validator('phone_num')
-    def enforce_phonenum(cls, v: str):
-
-        if v.__len__ != 10:
-
-            raise Exception("The length of 'phone_num' must be 10 characters")
-    ##I got lazy :p
+from models import Gen_User
 
 class UserController:
 
