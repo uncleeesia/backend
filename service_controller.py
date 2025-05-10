@@ -76,7 +76,33 @@ class ServiceController:
 
         try:
 
-            pass
+            if service_obj and service_obj.service_id:
+
+                pass
+
+            else: 
+
+                raise Exception("Invalid or Missing Arguement.")
+            
+            sql_command = sql.SQL("""UPDATE {}.service SET from_date = %(from_date)s, to_date = %(to_date)s, view_count = %(view_count)s, engagement_count = %(engagement_count)s, category_tags = %(category_tags)s, picture_url = %(picture_url)s WHERE service_id = %(service_id)s RETURNING service_id, user_id, from_date, to_date, view_count, engagement_count, category_tags, picture_url""").format(sql.Identifier(self.schema))
+            para = service_obj.model_dump()
+
+            db_results = self.dbt.callToDB(sql_command, para)
+
+            # Database result processing
+            if isinstance(db_results, tuple) and db_results:
+
+                pass
+
+            elif isinstance(db_results, str) and db_results == "":
+
+                raise Exception("Unable to update service")
+            
+            elif isinstance(db_results, Exception):
+
+                raise db_results
+            
+            result = Service.model_validate(db_results)
 
         except Exception as e:
 

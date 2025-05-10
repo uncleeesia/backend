@@ -107,7 +107,7 @@ class UserController:
 
             elif isinstance(db_results, str) and db_results == "":
 
-                raise Exception("Unable to find user")
+                raise Exception("Unable to update user")
             
             elif isinstance(db_results, Exception):
 
