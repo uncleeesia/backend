@@ -30,6 +30,7 @@ def list_routes():
 
 @app.route("/api/getPreferences", methods=["GET"])
 def get_preferences():
+    # logic to update get from db
     preferences = {
         "id": 1,
         "theme": "light",
@@ -48,12 +49,13 @@ def get_preferences():
 
 @app.route("/api/UpdatePreferences", methods=["POST"])
 def update_preferences(preferences):
-    # logic to update
+    # logic to update db
     return jsonify({"preferences": preferences}), 200
 
 
 @app.route("/api/getServiceProviders", methods=["GET"])
 def get_services():
+    # logic to update get from db
     servicesProvider = [
         {
             "id": 1,
