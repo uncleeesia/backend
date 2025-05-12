@@ -28,6 +28,7 @@ class Cleaner(BaseModel):
 class Service(BaseModel):
 
     service_id: int
+    service_name: str
     user_id: int
     from_date: datetime
     to_date: datetime
@@ -54,12 +55,13 @@ class Feedback(BaseModel):
 
     feedback_id: int
     by_user_id: int
-    from_user_id: int
+    to_user_id: int
     service_id: int
     rating: int = Field(ge=0, le=10)
     feedback_text: dict
     is_hidden: bool
     is_removed: bool
+    feedback_timestamp: datetime
 
 class Payment(BaseModel):
 

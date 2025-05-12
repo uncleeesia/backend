@@ -3,7 +3,7 @@
 BEGIN;
 
 
-CREATE TABLE IF NOT EXISTS "softwareDev_schema".cleaner
+CREATE TABLE IF NOT EXISTS "softwaredev_schema".cleaner
 (
     user_id bigint NOT NULL,
     view_count bigint,
@@ -11,19 +11,20 @@ CREATE TABLE IF NOT EXISTS "softwareDev_schema".cleaner
     CONSTRAINT cleaner_pkey PRIMARY KEY (user_id)
 );
 
-CREATE TABLE IF NOT EXISTS "softwareDev_schema".feedback
+CREATE TABLE IF NOT EXISTS "softwaredev_schema".feedback
 (
     feedback_id bigserial NOT NULL,
     by_user_id bigint,
-    from_user_id bigint,
+    to_user_id bigint,
     service_id bigint,
     rating smallint,
     feedback_text jsonb,
     is_hidden boolean,
-    is_removed boolean
+    is_removed boolean,
+    feedback_timestamp timestamp(3) with time zone
 );
 
-CREATE TABLE IF NOT EXISTS "softwareDev_schema".general_user
+CREATE TABLE IF NOT EXISTS "softwaredev_schema".general_user
 (
     user_id bigserial NOT NULL,
     username character varying(20) COLLATE pg_catalog."default" NOT NULL,
@@ -40,14 +41,14 @@ CREATE TABLE IF NOT EXISTS "softwareDev_schema".general_user
     CONSTRAINT general_user_pkey PRIMARY KEY (user_id)
 );
 
-CREATE TABLE IF NOT EXISTS "softwareDev_schema".homeowner
+CREATE TABLE IF NOT EXISTS "softwaredev_schema".homeowner
 (
     user_id bigint NOT NULL,
     service_id_list bigint[],
     CONSTRAINT homeowner_pkey PRIMARY KEY (user_id)
 );
 
-CREATE TABLE IF NOT EXISTS "softwareDev_schema".payment
+CREATE TABLE IF NOT EXISTS "softwaredev_schema".payment
 (
     payment_id bigserial NOT NULL,
     payment_method smallint NOT NULL DEFAULT 0,
@@ -59,7 +60,7 @@ CREATE TABLE IF NOT EXISTS "softwareDev_schema".payment
     CONSTRAINT payment_pkey PRIMARY KEY (payment_id)
 );
 
-CREATE TABLE IF NOT EXISTS "softwareDev_schema".service
+CREATE TABLE IF NOT EXISTS "softwaredev_schema".service
 (
     service_id bigserial NOT NULL,
     user_id bigint NOT NULL,
@@ -69,78 +70,79 @@ CREATE TABLE IF NOT EXISTS "softwareDev_schema".service
     engagement_count integer DEFAULT 0,
     category_tags jsonb,
     picture_url text,
+    service_name text
     CONSTRAINT service_pkey PRIMARY KEY (service_id)
 );
 
-ALTER TABLE IF EXISTS "softwareDev_schema".cleaner
+ALTER TABLE IF EXISTS "softwaredev_schema".cleaner
     ADD CONSTRAINT "cleaner user to user table" FOREIGN KEY (user_id)
-    REFERENCES "softwareDev_schema".general_user (user_id) MATCH SIMPLE
+    REFERENCES "softwaredev_schema".general_user (user_id) MATCH SIMPLE
     ON UPDATE CASCADE
     ON DELETE CASCADE;
 CREATE INDEX IF NOT EXISTS cleaner_pkey
-    ON "softwareDev_schema".cleaner(user_id);
+    ON "softwaredev_schema".cleaner(user_id);
 
 
-ALTER TABLE IF EXISTS "softwareDev_schema".feedback
+ALTER TABLE IF EXISTS "softwaredev_schema".feedback
     ADD CONSTRAINT "feedback  from user to user table" FOREIGN KEY (from_user_id)
-    REFERENCES "softwareDev_schema".general_user (user_id) MATCH SIMPLE
+    REFERENCES "softwaredev_schema".general_user (user_id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS "softwareDev_schema".feedback
+ALTER TABLE IF EXISTS "softwaredev_schema".feedback
     ADD CONSTRAINT "feedback by user to user table" FOREIGN KEY (by_user_id)
-    REFERENCES "softwareDev_schema".general_user (user_id) MATCH SIMPLE
+    REFERENCES "softwaredev_schema".general_user (user_id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS "softwareDev_schema".feedback
+ALTER TABLE IF EXISTS "softwaredev_schema".feedback
     ADD CONSTRAINT feedback_service_id_fkey FOREIGN KEY (service_id)
-    REFERENCES "softwareDev_schema".service (service_id) MATCH SIMPLE
+    REFERENCES "softwaredev_schema".service (service_id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS "softwareDev_schema".homeowner
+ALTER TABLE IF EXISTS "softwaredev_schema".homeowner
     ADD CONSTRAINT "homeowner user to user table" FOREIGN KEY (user_id)
-    REFERENCES "softwareDev_schema".general_user (user_id) MATCH SIMPLE
+    REFERENCES "softwaredev_schema".general_user (user_id) MATCH SIMPLE
     ON UPDATE CASCADE
     ON DELETE CASCADE;
 CREATE INDEX IF NOT EXISTS homeowner_pkey
-    ON "softwareDev_schema".homeowner(user_id);
+    ON "softwaredev_schema".homeowner(user_id);
 
 
-ALTER TABLE IF EXISTS "softwareDev_schema".payment
+ALTER TABLE IF EXISTS "softwaredev_schema".payment
     ADD CONSTRAINT "payment from user to user table" FOREIGN KEY (from_user_id)
-    REFERENCES "softwareDev_schema".general_user (user_id) MATCH SIMPLE
+    REFERENCES "softwaredev_schema".general_user (user_id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS "softwareDev_schema".payment
+ALTER TABLE IF EXISTS "softwaredev_schema".payment
     ADD CONSTRAINT "payment service to service table" FOREIGN KEY (service_id)
-    REFERENCES "softwareDev_schema".service (service_id) MATCH SIMPLE
+    REFERENCES "softwaredev_schema".service (service_id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS "softwareDev_schema".payment
+ALTER TABLE IF EXISTS "softwaredev_schema".payment
     ADD CONSTRAINT "payment to user to user table" FOREIGN KEY (to_user_id)
-    REFERENCES "softwareDev_schema".general_user (user_id) MATCH SIMPLE
+    REFERENCES "softwaredev_schema".general_user (user_id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS "softwareDev_schema".service
+ALTER TABLE IF EXISTS "softwaredev_schema".service
     ADD CONSTRAINT "service user to user table" FOREIGN KEY (user_id)
-    REFERENCES "softwareDev_schema".cleaner (user_id) MATCH SIMPLE
+    REFERENCES "softwaredev_schema".cleaner (user_id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE CASCADE
     NOT VALID;

@@ -1,5 +1,3 @@
-import json
-
 from logging import Logger
 from datetime import datetime
 from dbtalker_psql import DBTalker
@@ -23,14 +21,14 @@ class ServiceController:
 
             if service_id:
 
-                sql_command = sql.SQL("""SELECT service_id, user_id, from_date, 
+                sql_command = sql.SQL("""SELECT service_id, service_name, user_id, from_date, 
                 to_date, view_count, engagement_count, category_tags, 
                 picture_url FROM {}.service WHERE service_id = %s""").format(sql.Identifier(self.schema))
                 para = (service_id,)
 
             if user_id:
 
-                sql_command = sql.SQL("""SELECT service_id, user_id, from_date, 
+                sql_command = sql.SQL("""SELECT service_id, service_name, user_id, from_date, 
                 to_date, view_count, engagement_count, category_tags, 
                 picture_url FROM {}.service WHERE user_id = %s""").format(sql.Identifier(self.schema))
                 para = (user_id,)
@@ -68,7 +66,7 @@ class ServiceController:
         finally:
 
             return result
-        
+    
     def update_service(self, service_obj: Service) -> Service | Exception:
         """"""
 
@@ -84,7 +82,7 @@ class ServiceController:
 
                 raise Exception("Invalid or Missing Arguement.")
             
-            sql_command = sql.SQL("""UPDATE {}.service SET from_date = %(from_date)s, to_date = %(to_date)s, view_count = %(view_count)s, engagement_count = %(engagement_count)s, category_tags = %(category_tags)s, picture_url = %(picture_url)s WHERE service_id = %(service_id)s RETURNING service_id, user_id, from_date, to_date, view_count, engagement_count, category_tags, picture_url""").format(sql.Identifier(self.schema))
+            sql_command = sql.SQL("""UPDATE {}.service SET service_name = %(service_name)s, from_date = %(from_date)s, to_date = %(to_date)s, view_count = %(view_count)s, engagement_count = %(engagement_count)s, category_tags = %(category_tags)s, picture_url = %(picture_url)s WHERE service_id = %(service_id)s RETURNING service_id, service_name, user_id, from_date, to_date, view_count, engagement_count, category_tags, picture_url""").format(sql.Identifier(self.schema))
             para = service_obj.model_dump()
 
             db_results = self.dbt.callToDB(sql_command, para)
@@ -103,6 +101,70 @@ class ServiceController:
                 raise db_results
             
             result = Service.model_validate(db_results)
+
+        except Exception as e:
+
+            self.logger.error(e)
+
+            result = e
+
+        finally:
+
+            return result
+        
+    def sort_service(self, list_of_service: list[Service], sorting_type: str) -> list | Exception:
+        """"""
+
+        result = None
+
+        try:
+
+            if list_of_service and list_of_service.__len__ > 0:
+
+                pass
+
+            else:
+
+                raise Exception("Invalid or Missing Arguement.")
+            
+            if sorting_type and sorting_type.__len__ > 0:
+
+                pass
+
+            else:
+
+                sorting_type = "popularity"
+
+            for s in list_of_service:
+            
+                # Sort by engagement count
+                if str.strip(str.lower(sorting_type)) == "popularity":
+
+                    list_of_service.sort(key=Service.engagement_count, reverse=True)
+
+                # Sort by from_date need to dicuss further
+                elif str.strip(str.lower(sorting_type)) == "newest":
+
+                    list_of_service.sort(key=Service.from_date, reverse=True)
+
+                # Sort by name smallest
+                elif str.strip(str.lower(sorting_type)) == "name_small":
+
+                    list_of_service.sort(key=Service.service_name, reverse=False)
+
+                # Sort by name biggest
+                elif str.strip(str.lower(sorting_type)) == "name_small":
+
+                    list_of_service.sort(key=Service.service_name, reverse=True)      
+
+                # Sort by tags, need further discussion
+                elif str.strip(str.lower(sorting_type)) == "tags":
+
+                    pass
+
+                continue
+
+            result = list_of_service
 
         except Exception as e:
 
