@@ -175,3 +175,70 @@ class UserController:
         finally:
 
             return result
+        
+    def create_account(self, user_details: tuple):
+        """"""
+
+        result = None
+
+        try:
+
+            if user_details and user_details.__len__ > 0:
+
+                pass
+
+            else:
+
+                raise Exception("Invalid or Missing Arguement.")
+            
+            verification_result = self.verify_user_details(user_details)
+
+            if isinstance(verification_result, bool) and verification_result:
+
+                pending_user = Gen_User.model_validate(user_details)
+
+            elif isinstance(verification_result, bool) and not verification_result:
+
+                raise Exception("Failed To Verify User Details.")
+
+            else:
+
+                raise Exception("Failed To Create User Account.")
+            
+            sql_command = sql.SQL("""""").format(sql.Identifier(self.schema))
+            para = (pending_user)
+
+            callToDB_result = self.dbt.callToDB(sql_command, para)
+
+            if isinstance(callToDB_result, tuple):
+
+                pass
+
+            elif isinstance(callToDB_result, Exception):
+
+                raise callToDB_result
+            
+            else:
+
+                raise Exception("Unable To Create User.")
+            
+            result = Gen_User.model_validate(callToDB_result)
+
+        except Exception as e:
+
+            self.logger.error(e)
+
+            result = e
+
+        finally:
+
+            return result
+
+    def verify_user_details(self, user_details: tuple) -> bool | Exception:
+        """"""
+
+        # Vibe code here
+
+        # Check email for naughty stuff like double @ symbols
+
+        # Check phone_num for naughty stuff like double + symbols
