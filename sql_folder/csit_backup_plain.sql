@@ -112,7 +112,7 @@ CREATE TABLE csit314_schma.general_user (
     is_cleaner boolean NOT NULL,
     service_id_list bigint[],
     profile_description text,
-    "picture)url" text
+    picture_url text
 );
 
 

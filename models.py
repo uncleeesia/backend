@@ -2,80 +2,71 @@ from typing import Any
 from datetime import datetime
 from pydantic import BaseModel, Field, field_validator
 
-class Gen_User(BaseModel):
+class General_user(BaseModel):
 
     user_id: int
-    username: str = Field(min_length=5, max_length=20)
-    email: str = Field(min_length=5)
-    password: str = Field(min_length=8, max_length=20)
-    phone_num: str = Field(min_length=10, max_length=10)
-    notification_method: int = Field(default=1)
-    payment_method: int = Field(default=0)
-    hidden_count: int = Field(default=0)
-    removed_count: int = Field(default=0)
-    favourite_list: dict | None = None
-    unstruct_data: dict | None = None
+    username: str
+    password: str
+    email: str
+    phone_number: str = Field(min_length=10, max_length=10)
+    address: str | None
+    is_cleaner: bool
+    service_id_list: list[int] | None
+    profile_description: str | None
     picture_url: str
-        
-class HomeOwner(BaseModel):
 
-    iamsleepy: Any
+    @field_validator('phone_number')
+    def enforce_phone_number(cls, v):
 
-class Cleaner(BaseModel):
+        if "+" != v[0]:
 
-    iwillvibecodethis: Any
+            raise Exception("Invalid input for field 'phone_number'.")
 
 class Service(BaseModel):
 
     service_id: int
     service_name: str
-    user_id: int
-    from_date: datetime
-    to_date: datetime
-    view_count: int = Field(default=0)
-    engagement_count: int = Field(default=0)
-    category_tags: dict
-    picture_url: str
-
-    @field_validator('from_date')
-    def validate_from_date(cls, v: datetime):
-
-        if not v.tzinfo:
-
-            raise Exception("Invalid value for field 'from_date'.")
-        
-    @field_validator('to_date')
-    def validate_from_date(cls, v: datetime):
-
-        if not v.tzinfo:
-
-            raise Exception("Invalid value for field 'to_date'.")
+    by_user_id: int
+    price: float = Field(decimal_places=2)
+    duration: str
+    service_description: str
+    service_tags: list[str]
+    picture_url: list[str]
         
 class Feedback(BaseModel):
 
     feedback_id: int
-    by_user_id: int
-    to_user_id: int
-    service_id: int
-    rating: int = Field(ge=0, le=10)
-    feedback_text: dict
-    is_hidden: bool
-    is_removed: bool
-    feedback_timestamp: datetime
+    username: str
+    phone_number: str = Field(min_length=10, max_length=10)
+    feedback_text: str
+
+    @field_validator('phone_number')
+    def enforce_phone_number(cls, v):
+
+        if "+" != v[0]:
+
+            raise Exception("Invalid input for field 'phone_number'.")
 
 class Payment(BaseModel):
 
     payment_id: int
-    payment_method: int = Field(default=0)
     service_id: int
     from_user_id: int
-    by_user_id: int
-    is_completed: bool
+    to_user_id: int
+    price: float = Field(decimal_places=2)
     payment_timestamp: datetime
+    booking_timestamp: datetime
 
     @field_validator('payment_timestamp')
-    def validate_payment_timestamp(cls, v: datetime):
+    def enforce(cls, v: datetime):
 
-        if not v.tzinfo:
+        if not v:
 
-            raise Exception("Invalid value for field 'payment_timestamp'.")
+            raise Exception("Invalid input for field 'payment_timestamp'.")
+        
+    @field_validator('booking_timestamp')
+    def enforce(cls, v: datetime):
+
+        if not v:
+
+            raise Exception("Invalid input for field 'booking_timestamp'.")
