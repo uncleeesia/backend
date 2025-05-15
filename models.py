@@ -1,3 +1,5 @@
+import re
+
 from typing import Any
 from datetime import datetime
 from pydantic import BaseModel, Field, field_validator
@@ -14,11 +16,25 @@ class General_user(BaseModel):
     service_id_list: list[int] | None
     profile_description: str | None
     picture_url: str
+    preferences: dict
+
+    @field_validator('email')
+    def enforce_email(cls, v: str):
+
+        pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+        result =  bool(re.match(pattern, v))
+
+        if not result and v.count("@") > 1:
+
+            raise Exception("Invalid input for field 'email'.")
 
     @field_validator('phone_number')
     def enforce_phone_number(cls, v):
 
-        if "+" != v[0]:
+        pattern = r"^\+?[1-9]\d{1,14}$"
+        result = bool(re.match(pattern, v))
+
+        if not v:
 
             raise Exception("Invalid input for field 'phone_number'.")
 
@@ -32,6 +48,7 @@ class Service(BaseModel):
     service_description: str
     service_tags: list[str]
     picture_url: list[str]
+    listing_timestamp: datetime
         
 class Feedback(BaseModel):
 
@@ -43,7 +60,10 @@ class Feedback(BaseModel):
     @field_validator('phone_number')
     def enforce_phone_number(cls, v):
 
-        if "+" != v[0]:
+        pattern = r"^\+?[1-9]\d{1,14}$"
+        result = bool(re.match(pattern, v))
+
+        if not result:
 
             raise Exception("Invalid input for field 'phone_number'.")
 
@@ -70,3 +90,11 @@ class Payment(BaseModel):
         if not v:
 
             raise Exception("Invalid input for field 'booking_timestamp'.")
+        
+class Review(BaseModel):
+
+    review_id: int
+    review_score: int
+    review_text: str
+    user_id: int
+    service: int

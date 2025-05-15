@@ -21,16 +21,12 @@ class ServiceController:
 
             if service_id:
 
-                sql_command = sql.SQL("""SELECT service_id, service_name, user_id, from_date, 
-                to_date, view_count, engagement_count, category_tags, 
-                picture_url FROM {}.service WHERE service_id = %s""").format(sql.Identifier(self.schema))
+                sql_command = sql.SQL("""SELECT service_id, service_name, by_user_id, price, duration, sercice_description, service_tags, picture_url, listing_timestamp FROM {}.service WHERE service_id = %s""").format(sql.Identifier(self.schema))
                 para = (service_id,)
 
             if user_id:
 
-                sql_command = sql.SQL("""SELECT service_id, service_name, user_id, from_date, 
-                to_date, view_count, engagement_count, category_tags, 
-                picture_url FROM {}.service WHERE user_id = %s""").format(sql.Identifier(self.schema))
+                sql_command = sql.SQL("""service_id, service_name, by_user_id, price, duration, sercice_description, service_tags, picture_url, listing_timestamp FROM {}.service WHERE by_user_id = %s""").format(sql.Identifier(self.schema))
                 para = (user_id,)
 
             db_results = self.dbt.callToDB(sql_command, para)
@@ -82,7 +78,7 @@ class ServiceController:
 
                 raise Exception("Invalid or Missing Arguement.")
             
-            sql_command = sql.SQL("""UPDATE {}.service SET service_name = %(service_name)s, from_date = %(from_date)s, to_date = %(to_date)s, view_count = %(view_count)s, engagement_count = %(engagement_count)s, category_tags = %(category_tags)s, picture_url = %(picture_url)s WHERE service_id = %(service_id)s RETURNING service_id, service_name, user_id, from_date, to_date, view_count, engagement_count, category_tags, picture_url""").format(sql.Identifier(self.schema))
+            sql_command = sql.SQL("""UPDATE {}.service SET service_name=%(service_name)s, by_user_id=%(by_user_id)s, price=%(price)s, duration=%(duration)s, service_description=%(service_description)s, service_tags=%(service_tags)s, picture_url=%(picture_url)s, listing_timestamp=%(listing_timestamp)s WHERE service_id=%(service_id)s RETURNING service_id, service_name, by_user_id, price, duration, sercice_description, service_tags, picture_url, listing_timestamp""").format(sql.Identifier(self.schema))
             para = service_obj.model_dump()
 
             db_results = self.dbt.callToDB(sql_command, para)
@@ -94,7 +90,7 @@ class ServiceController:
 
             elif isinstance(db_results, str) and db_results == "":
 
-                raise Exception("Unable to update service")
+                raise Exception("Unable to update service.")
             
             elif isinstance(db_results, Exception):
 
@@ -136,16 +132,19 @@ class ServiceController:
                 sorting_type = "popularity"
 
             for s in list_of_service:
+
+                # Call review controller here to get reviews
+                # Call payment controller here to get payments
             
-                # Sort by engagement count
+                # Sort by number of payment
                 if str.strip(str.lower(sorting_type)) == "popularity":
 
-                    list_of_service.sort(key=Service.engagement_count, reverse=True)
+                    list_of_service.sort(key=lambda service: None, reverse=True)
 
-                # Sort by from_date need to dicuss further
+                # Sort by listing timestamp
                 elif str.strip(str.lower(sorting_type)) == "newest":
 
-                    list_of_service.sort(key=Service.from_date, reverse=True)
+                    list_of_service.sort(key=lambda service: None, reverse=True)
 
                 # Sort by name smallest
                 elif str.strip(str.lower(sorting_type)) == "name_small":
@@ -153,12 +152,17 @@ class ServiceController:
                     list_of_service.sort(key=Service.service_name, reverse=False)
 
                 # Sort by name biggest
-                elif str.strip(str.lower(sorting_type)) == "name_small":
+                elif str.strip(str.lower(sorting_type)) == "name_big":
 
                     list_of_service.sort(key=Service.service_name, reverse=True)      
 
-                # Sort by tags, need further discussion
-                elif str.strip(str.lower(sorting_type)) == "tags":
+                # Sort by review score followed by number of reviews
+                elif str.strip(str.lower(sorting_type)) == "rating":
+
+                    pass
+
+                # Sort by price
+                elif str.strip(str.lower(sorting_type)) == "price":
 
                     pass
 

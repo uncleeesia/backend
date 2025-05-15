@@ -1,4 +1,4 @@
-import json
+import re
 
 from argon2 import PasswordHasher
 from logging import Logger
@@ -16,7 +16,7 @@ class UserController:
         self.schema = str.strip(Schema_Name)
         self.hash_setting = PasswordHasher(time_cost=1,memory_cost=64 * 1024,parallelism=4,hash_len=32,salt_len=10,)
 
-    def create_user(self, user_details: tuple):
+    def create_user(self, user_details: dict):
         """"""
 
         result = None
@@ -31,10 +31,11 @@ class UserController:
 
                 raise Exception("Invalid or missing arguement.")
             
+            # Insert a fake user id into user_details 1st to use Pydantic model validation
             pending_user = General_user.model_validate(user_details)
             
-            sql_command = sql.SQL("""""").format(sql.Identifier(self.schema))
-            para = (pending_user)
+            sql_command = sql.SQL("""INSERT INTO {}.general_user (username, password, email, phone_number, address, is_cleaner, service_id_list, profile_description, picture_url) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING user_id, username, password, email, phone_number, address, is_cleaner, service_id_list, profile_description, picture_url""").format(sql.Identifier(self.schema))
+            para = (pending_user,)
 
             callToDB_result = self.dbt.callToDB(sql_command, para)
 
@@ -72,12 +73,12 @@ class UserController:
             # Arguement Check
             if user_id and user_id > 0:
                 
-                sql_command = sql.SQL("""""").format(sql.Identifier(self.schema))
+                sql_command = sql.SQL("""SELECT user_id. username, password, email, phone_number, address, is_cleaner, service_id_list, profile_description, picture_url, preferences FROM {}.general_user WHERE user_id = %s""").format(sql.Identifier(self.schema))
                 para = (user_id,)
 
             elif email:
 
-                sql_command = sql.SQL("""""").format(sql.Identifier(self.schema))
+                sql_command = sql.SQL("""SELECT user_id. username, password, email, phone_number, address, is_cleaner, service_id_list, profile_description, picture_url, preferences FROM {}.general_user WHERE email = %s""").format(sql.Identifier(self.schema))
                 para = (email,)
 
             else:
@@ -127,17 +128,7 @@ class UserController:
 
                 raise Exception("Invalid or missing arguements")
             
-            # This hurts T_T
-            # sql_command = sql.SQL("""UPDATE {}.general_user SET username=%(username)s, 
-            # email=%(email)s, password=%(password)s, 
-            # phone_num=%(phone_num)s, notification_method=%(notification_method)s, 
-            # payment_method=%(payment_method)s, hidden_count=%(hidden_count)s, 
-            # removed_count=%(removed_count)s, favourite_list=%(favourite_list)s, 
-            # unstruct_data=%(unstruct_data)s WHERE user_id=%(user_id)s 
-            # RETURNING user_id, username, email, password, phone_num, notification_method, 
-            # payment_method, hidden_count, removed_count, favourite_list, unstruct_data
-            # """).format(sql.Identifier(self.schema))
-            sql_command = sql.SQL("""""").format(sql.Identifier(self.schema))
+            sql_command = sql.SQL("""UPDATE {}.general_user SET username=%(username)s, password=%(password)s, email=%(email)s, phone_number=%(phone_number)s, address=%(address)s, profile_description=%(profile_description)s, picture_url=%(picture_url)s, preferences=%(preferences)s WHERE user_id=%(user_id)s RETURNING user_id. username, password, email, phone_number, address, is_cleaner, service_id_list, profile_description, picture_url, preferences""").format(sql.Identifier(self.schema))
             para = user_obj.model_dump()
 
             db_results = self.dbt.callToDB(sql_command, para)
@@ -167,7 +158,7 @@ class UserController:
 
             return result
         
-    def verify_login(self, raw_email: str, raw_password: str) -> bool | Exception:
+    def verify_login(self, raw_email: str, raw_password: str) -> General_user | Exception:
         """"""
 
         result = None
@@ -177,11 +168,13 @@ class UserController:
             # Arguement Check
             if raw_email and raw_password:
 
-                user_data = self.extract_user(email=raw_email)
+                pass
             
             else:
 
                 raise Exception("Invalid or missing arguements.")
+            
+            user_data = self.extract_user(email=raw_email)
             
             # Result processing
             if isinstance(user_data, General_user):
@@ -198,15 +191,11 @@ class UserController:
 
             if is_match and isinstance(is_match, bool):
 
-                result = True
-
-            elif not is_match and isinstance(is_match, bool):
-
-                result = False
+                result = user_data
 
             else:
 
-                raise Exception("Failed to Verify Login")
+                raise Exception("Failed too verify login.")
 
         except Exception as e:
 
@@ -218,15 +207,92 @@ class UserController:
 
             return result
 
-    def verify_user_details(self, user_details: tuple) -> bool | Exception:
+    def verify_registration(self, user_details: dict) -> dict | Exception:
         """"""
 
         # Vibe code here
 
-        # Check email for naughty stuff like double @ symbols
-
-        # Check phone_num for naughty stuff like double + symbols
-
         # Enforce password characteristics
 
         # Hash password
+
+        result = None
+
+        try:
+
+            if user_details and user_details.__len__ > 0:
+
+                pass
+
+            else:
+
+                raise Exception("Invalid or missing arguement.")
+            
+            unverified_username = str(user_details["username"])
+            unverified_password = str(user_details["password"])          
+            unverified_email = str(user_details["email"])
+            unverified_phone_number = str(user_details["phone_number"])
+
+            email_pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+            password_pattern = r"(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9])"
+            phone_number_pattern = r"^\+?[1-9]\d{1,14}$"
+            username_pattern = r"[^a-zA-Z0-9]"
+
+            #Check Username
+            if bool(re.match(pattern=username_pattern, string=unverified_username)) and unverified_username.__len__ >= 5:
+
+                pass
+
+            else:
+
+                raise Exception("Invalid input for field 'username'.")
+
+            # Check password
+            if bool(re.match(pattern=password_pattern, string=unverified_password)) and unverified_password.__len__ >= 8:
+
+                pass
+
+            else:
+
+                raise Exception("Invalid input for field 'password'.")
+
+            # Check email
+            if bool(re.match(pattern=email_pattern,string=unverified_email)) and unverified_email.count("@") == 1:
+
+                pass
+
+            else:
+
+                raise Exception("Invalid input for field 'email'.")
+            
+            # Check phone number
+            if bool(re.match(pattern=phone_number_pattern, string=unverified_phone_number)):
+
+                pass
+
+            else:
+
+                raise Exception("INvalid input for field 'phone_number'.")
+            
+            # Hash the password
+            hash_password = self.hash_setting.hash(password=unverified_password)
+
+            if isinstance(hash_password, str):
+
+                user_details["password"] = hash_password
+
+            else:
+
+                raise Exception(hash_password)
+            
+            result = user_details
+
+        except Exception as e:
+
+            self.logger.error(e)
+
+            result = e
+
+        finally:
+
+            return result
