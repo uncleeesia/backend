@@ -47,7 +47,7 @@ class ServiceController:
 
             elif isinstance(db_results, str) and db_results == "":
 
-                raise Exception("Unable to Find Service.")
+                raise Exception("Unable to find service.")
             
             elif isinstance(db_results, Exception):
 

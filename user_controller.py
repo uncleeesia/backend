@@ -210,12 +210,6 @@ class UserController:
     def verify_registration(self, user_details: dict) -> dict | Exception:
         """"""
 
-        # Vibe code here
-
-        # Enforce password characteristics
-
-        # Hash password
-
         result = None
 
         try:

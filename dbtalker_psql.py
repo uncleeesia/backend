@@ -32,7 +32,7 @@ class DBTalker:
     def callToDB(self, sqlCommand: str, para: set) -> tuple | list | str | Exception:
         """
         A generic function to communicate with the database. 
-        The command, parameters and database name will be wiped at the end of this function.
+        The command and parameters will be wiped at the end of this function.
 
         **Parameters**
 
