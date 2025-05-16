@@ -13,6 +13,7 @@ class FeedbackController:
         self.schema = str.strip(Schema_Name)
 
     def insert_feedback(self, feedback_detail: tuple):
+        """"""
 
         result = None
 
@@ -26,8 +27,28 @@ class FeedbackController:
 
                 raise Exception("Invalid or Missing Arguement.")
             
-            # I will get back to this
-            sql_command = sql.SQL("""INSERT INTO {}.feedback ()""").format(sql.Identifier(self.schema))
+            username = str.strip(str(feedback_detail[0]))
+            phone_number = str.strip(str(feedback_detail[1]))
+            feedback_text = str.strip(str(feedback_detail[2]))
+            
+            sql_command = sql.SQL("""INSERT INTO {}.feedback (username, phone_number, feedback_text) VALUES (%s, %s, %s) RETURNING feedback_id""").format(sql.Identifier(self.schema))
+            para = (username, phone_number, feedback_text)
+
+            callToDB_result = self.dbt.callToDB(sql_command, para)
+
+            if isinstance(callToDB_result, tuple):
+
+                pass
+
+            elif isinstance(callToDB_result, Exception):
+
+                raise callToDB_result
+            
+            else:
+
+                raise Exception("Unable to create user.")
+            
+            result = True
 
         except Exception as e:
 
