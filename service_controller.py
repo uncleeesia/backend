@@ -32,7 +32,7 @@ class ServiceController:
 
             else:
 
-                sql_command = sql.SQL("""SELECT service_id, service_name, by_user_id, price, duration, service_description, service_tags, picture_url, listing_timestamp FROM {}.service""").format(sql.Identifier(self.schema))
+                sql_command = sql.SQL("""SELECT DISTINCT username, service_id, service_name, by_user_id, price, duration, service_description, service_tags, picture_url, listing_timestamp FROM {}.service s inner join {}.general_user u ON s.by_user_id = u.user_id """).format(sql.Identifier(self.schema))
                 para = ()
 
             callToDB_result = self.dbt.callToDB(sql_command, para)
