@@ -95,7 +95,7 @@ class PaymentController():
 
                 data = dict(zip(cols, callToDB_result))
                 
-                result = payment_list.append(Payment.model_validate(data))
+                payment_list.append(Payment.model_validate(data))
 
             elif isinstance(callToDB_result, list):
 
@@ -107,8 +107,6 @@ class PaymentController():
                     
                     payment_list.append(Payment.model_validate(data))
 
-                result = payment_list
-
             elif isinstance(callToDB_result, Exception):
 
                 raise callToDB_result
@@ -116,6 +114,8 @@ class PaymentController():
             elif isinstance(callToDB_result, str) and callToDB_result == "":
 
                 raise Exception("Unable to find payment.")
+            
+            result = payment_list
 
         except Exception as e:
 

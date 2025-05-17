@@ -111,26 +111,32 @@ class UserController:
 
                 data = dict(zip(cols, callToDB_result))
                 
-                result = user_list.append(General_user.model_validate(data))
+                user_list.append(General_user.model_validate(data))
 
             elif isinstance(callToDB_result, str) and callToDB_result == "":
 
                 raise Exception("Unable to extract user.")
             
+            elif isinstance(callToDB_result, list) and callToDB_result:
+
+                for u in callToDB_result:
+
+                    cols = (
+                        "user_id", "username", "password", "email",
+                        "phone_number", "address", "is_cleaner",
+                        "service_id_list", "profile_description",
+                        "picture_url", "preferences"
+                    )
+
+                    data = dict(zip(cols, u))
+                    
+                    user_list.append(General_user.model_validate(data))
+            
             elif isinstance(callToDB_result, Exception):
 
                 raise callToDB_result
             
-            cols = (
-                "user_id", "username", "password", "email",
-                "phone_number", "address", "is_cleaner",
-                "service_id_list", "profile_description",
-                "picture_url", "preferences"
-            )
-
-            data = dict(zip(cols, callToDB_result))
-            
-            result = General_user.model_validate(data)
+            result = user_list
             
         except Exception as e:
 

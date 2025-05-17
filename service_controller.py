@@ -45,7 +45,7 @@ class ServiceController:
                 
                 data = dict(zip(cols, callToDB_result))
 
-                result = service_list.append(Service.model_validate(data))
+                service_list.append(Service.model_validate(data))
 
             elif isinstance(callToDB_result, list) and callToDB_result:
 
@@ -57,8 +57,6 @@ class ServiceController:
 
                     service_list.append(Service.model_validate(data))
 
-                result = service_list
-
             elif isinstance(callToDB_result, str) and callToDB_result == "":
 
                 raise Exception("Unable to find service.")
@@ -66,6 +64,8 @@ class ServiceController:
             elif isinstance(callToDB_result, Exception):
 
                 raise callToDB_result
+            
+            result = service_list
 
         except Exception as e:
 

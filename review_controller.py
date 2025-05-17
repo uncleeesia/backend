@@ -47,7 +47,7 @@ class ReviewController():
 
                 data = dict(zip(cols, callToDB_result))
                 
-                result = review_list.append(Review.model_validate(data))
+                review_list.append(Review.model_validate(data))
 
             elif isinstance(callToDB_result, list) and callToDB_result:
 
@@ -59,8 +59,6 @@ class ReviewController():
                     
                     review_list.append(Review.model_validate(data))
 
-                result = review_list
-
             elif isinstance(callToDB_result, str) and callToDB_result == "":
 
                 raise Exception("Unable to find review.")
@@ -68,6 +66,8 @@ class ReviewController():
             elif isinstance(callToDB_result, Exception):
 
                 raise callToDB_result
+            
+            result = review_list
 
         except Exception as e:
 
