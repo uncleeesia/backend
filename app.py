@@ -60,10 +60,10 @@ def get_user():
     result = None
 
     try: 
-        email = request.args.get('email', type=any)
+        email = request.args.get('email', type=str)
     
         # Check if valid integer
-        if isinstance(email, any):
+        if isinstance(email, str):
 
             pass
 
