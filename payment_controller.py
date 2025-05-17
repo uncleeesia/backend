@@ -60,7 +60,7 @@ class PaymentController():
 
             return result
 
-    def extract_payment(self, service_id: int | None, from_user_id: int | None, by_user_id: int | None) -> Payment | list[Payment] | Exception:
+    def extract_payment(self, service_id: int | None = None, from_user_id: int | None = None, by_user_id: int | None = None) -> list[Payment] | Exception:
         """"""
 
         result = None
@@ -95,7 +95,7 @@ class PaymentController():
 
                 data = dict(zip(cols, callToDB_result))
                 
-                result = Payment.model_validate(data)
+                payment_list.append(Payment.model_validate(data))
 
             elif isinstance(callToDB_result, list):
 
@@ -103,11 +103,9 @@ class PaymentController():
 
                     cols = ("payment_id", "service_id", "from_user_id", "to_user_id", "price", "payment_timestamp", "booking_timestamp")
 
-                    data = dict(zip(cols, callToDB_result))
+                    data = dict(zip(cols, p))
                     
                     payment_list.append(Payment.model_validate(data))
-
-                result = payment_list
 
             elif isinstance(callToDB_result, Exception):
 
@@ -116,6 +114,8 @@ class PaymentController():
             elif isinstance(callToDB_result, str) and callToDB_result == "":
 
                 raise Exception("Unable to find payment.")
+            
+            result = payment_list
 
         except Exception as e:
 

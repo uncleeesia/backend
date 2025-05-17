@@ -69,7 +69,7 @@ class UserController:
 
             return result
 
-    def extract_user(self, user_id: int | None, email: str | None) -> General_user | Exception:
+    def extract_user(self, user_id: int | None = None, email: str | None = None, is_cleaner: bool | None = None) -> list[General_user] | Exception:
         """"""
 
         result = None
@@ -87,35 +87,56 @@ class UserController:
                 sql_command = sql.SQL("""SELECT user_id. username, password, email, phone_number, address, is_cleaner, service_id_list, profile_description, picture_url, preferences FROM {}.general_user WHERE email = %s""").format(sql.Identifier(self.schema))
                 para = (email,)
 
+            elif isinstance(is_cleaner, bool):
+
+                sql_command = sql.SQL("""SELECT user_id. username, password, email, phone_number, address, is_cleaner, service_id_list, profile_description, picture_url, preferences FROM {}.general_user WHERE is_cleaner = %s""").format(sql.Identifier(self.schema))
+                para = (is_cleaner,)
+
             else:
 
                 raise Exception("Invalid or missing arguements.")
 
             callToDB_result = self.dbt.callToDB(sql_command, para)
+            user_list = []
 
             # Database result processing
             if isinstance(callToDB_result, tuple) and callToDB_result:
 
-                pass
+                cols = (
+                    "user_id", "username", "password", "email",
+                    "phone_number", "address", "is_cleaner",
+                    "service_id_list", "profile_description",
+                    "picture_url", "preferences"
+                )
+
+                data = dict(zip(cols, callToDB_result))
+                
+                user_list.append(General_user.model_validate(data))
 
             elif isinstance(callToDB_result, str) and callToDB_result == "":
 
                 raise Exception("Unable to extract user.")
             
+            elif isinstance(callToDB_result, list) and callToDB_result:
+
+                for u in callToDB_result:
+
+                    cols = (
+                        "user_id", "username", "password", "email",
+                        "phone_number", "address", "is_cleaner",
+                        "service_id_list", "profile_description",
+                        "picture_url", "preferences"
+                    )
+
+                    data = dict(zip(cols, u))
+                    
+                    user_list.append(General_user.model_validate(data))
+            
             elif isinstance(callToDB_result, Exception):
 
                 raise callToDB_result
             
-            cols = (
-                "user_id", "username", "password", "email",
-                "phone_number", "address", "is_cleaner",
-                "service_id_list", "profile_description",
-                "picture_url", "preferences"
-            )
-
-            data = dict(zip(cols, callToDB_result))
-            
-            result = General_user.model_validate(data)
+            result = user_list
             
         except Exception as e:
 
@@ -232,7 +253,7 @@ class UserController:
 
         try:
 
-            if user_details and user_details.__len__ > 0:
+            if user_details and len(user_details) > 0:
 
                 pass
 
@@ -251,7 +272,7 @@ class UserController:
             username_pattern = r"[^a-zA-Z0-9]"
 
             #Check Username
-            if bool(re.match(pattern=username_pattern, string=unverified_username)) and unverified_username.__len__ >= 5:
+            if bool(re.match(pattern=username_pattern, string=unverified_username)) and len(unverified_username) >= 5:
 
                 pass
 
@@ -260,7 +281,7 @@ class UserController:
                 raise Exception("Invalid input for field 'username'.")
 
             # Check password
-            if bool(re.match(pattern=password_pattern, string=unverified_password)) and unverified_password.__len__ >= 8:
+            if bool(re.match(pattern=password_pattern, string=unverified_password)) and len(unverified_password) >= 8:
 
                 pass
 
