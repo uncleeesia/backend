@@ -22,7 +22,7 @@ class UserController:
 
         try:
 
-            if user_details and user_details.__len__ > 0:
+            if user_details:
 
                 pass
 

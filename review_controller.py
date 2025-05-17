@@ -76,7 +76,7 @@ class ReviewController():
 
         try:
 
-            if review_details and review_details.__len__ > 0:
+            if review_details:
 
                 pass
 

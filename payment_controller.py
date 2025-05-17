@@ -18,7 +18,7 @@ class PaymentController():
 
         try:
 
-            if payment_details and payment_details.__len__ > 0:
+            if payment_details:
 
                 pass
 

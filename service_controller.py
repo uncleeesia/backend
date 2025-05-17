@@ -226,7 +226,7 @@ class ServiceController:
 
         try:
 
-            if service_details and service_details.__len__ > 0:
+            if service_details:
 
                 pass
 

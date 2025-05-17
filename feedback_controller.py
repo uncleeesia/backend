@@ -18,7 +18,7 @@ class FeedbackController:
 
         try:
 
-            if feedback_detail and feedback_detail.__len__ > 0:
+            if feedback_detail:
 
                 pass
 
