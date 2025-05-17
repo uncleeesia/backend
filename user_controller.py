@@ -33,7 +33,7 @@ class UserController:
             # Insert a fake user id into user_details 1st to use Pydantic model validation
             pending_user = General_user.model_validate(user_details)
             
-            sql_command = sql.SQL("""INSERT INTO {}.general_user (username, password, email, phone_number, address, is_cleaner, service_id_list, profile_description, picture_url) VALUES (%(usename)s, %(password)s, %(email)s, %(phone_number)s, %(address)s, %(is_cleaner)s, %(service_id_list)s, %(profile_description)s, %(picture_url)s) RETURNING user_id, username, password, email, phone_number, address, is_cleaner, service_id_list, profile_description, picture_url""").format(sql.Identifier(self.schema))
+            sql_command = sql.SQL("""INSERT INTO {}.general_user (username, password, email, phone_number, address, is_cleaner, service_id_list, profile_description, picture_url, preferences) VALUES (%(username)s, %(password)s, %(email)s, %(phone_number)s, %(address)s, %(is_cleaner)s, %(service_id_list)s, %(profile_description)s, %(picture_url)s, %(preferences)s) RETURNING user_id, username, password, email, phone_number, address, is_cleaner, service_id_list, profile_description, picture_url""").format(sql.Identifier(self.schema))
             para = pending_user.model_dump()
 
             callToDB_result = self.dbt.callToDB(sql_command, para)
@@ -50,7 +50,16 @@ class UserController:
 
                 raise Exception("Unable to create user.")
             
-            result = General_user.model_validate(callToDB_result)
+            cols = (
+                "user_id", "username", "password", "email",
+                "phone_number", "address", "is_cleaner",
+                "service_id_list", "profile_description",
+                "picture_url", "preferences"
+            )
+
+            data = dict(zip(cols, callToDB_result))
+            
+            result = General_user.model_validate(data)
 
         except Exception as e:
 
@@ -82,22 +91,31 @@ class UserController:
 
                 raise Exception("Invalid or missing arguements.")
 
-            db_results = self.dbt.callToDB(sql_command, para)
+            callToDB_result = self.dbt.callToDB(sql_command, para)
 
             # Database result processing
-            if isinstance(db_results, tuple) and db_results:
+            if isinstance(callToDB_result, tuple) and callToDB_result:
 
                 pass
 
-            elif isinstance(db_results, str) and db_results == "":
+            elif isinstance(callToDB_result, str) and callToDB_result == "":
 
                 raise Exception("Unable to extract user.")
             
-            elif isinstance(db_results, Exception):
+            elif isinstance(callToDB_result, Exception):
 
-                raise db_results
+                raise callToDB_result
             
-            result = General_user.model_validate(db_results)
+            cols = (
+                "user_id", "username", "password", "email",
+                "phone_number", "address", "is_cleaner",
+                "service_id_list", "profile_description",
+                "picture_url", "preferences"
+            )
+
+            data = dict(zip(cols, callToDB_result))
+            
+            result = General_user.model_validate(data)
             
         except Exception as e:
 
@@ -126,22 +144,31 @@ class UserController:
             sql_command = sql.SQL("""UPDATE {}.general_user SET username=%(username)s, password=%(password)s, email=%(email)s, phone_number=%(phone_number)s, address=%(address)s, profile_description=%(profile_description)s, picture_url=%(picture_url)s, preferences=%(preferences)s WHERE user_id=%(user_id)s RETURNING user_id. username, password, email, phone_number, address, is_cleaner, service_id_list, profile_description, picture_url, preferences""").format(sql.Identifier(self.schema))
             para = user_obj.model_dump()
 
-            db_results = self.dbt.callToDB(sql_command, para)
+            callToDB_result = self.dbt.callToDB(sql_command, para)
 
             # Database result processing
-            if isinstance(db_results, tuple) and db_results:
+            if isinstance(callToDB_result, tuple) and callToDB_result:
 
                 pass
 
-            elif isinstance(db_results, str) and db_results == "":
+            elif isinstance(callToDB_result, str) and callToDB_result == "":
 
                 raise Exception("Unable to update user.")
             
-            elif isinstance(db_results, Exception):
+            elif isinstance(callToDB_result, Exception):
 
-                raise db_results
+                raise callToDB_result
             
-            result = General_user.model_validate(db_results)
+            cols = (
+                "user_id", "username", "password", "email",
+                "phone_number", "address", "is_cleaner",
+                "service_id_list", "profile_description",
+                "picture_url", "preferences"
+            )
+            
+            data = dict(zip(cols, callToDB_result))
+            
+            result = General_user.model_validate(data)
 
         except Exception as e:
 

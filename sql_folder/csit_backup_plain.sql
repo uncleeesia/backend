@@ -112,7 +112,8 @@ CREATE TABLE csit314_schma.general_user (
     is_cleaner boolean NOT NULL,
     service_id_list bigint[],
     profile_description text,
-    picture_url text
+    picture_url text,
+    preferences jsonb
 );
 
 
@@ -237,7 +238,8 @@ CREATE TABLE csit314_schma.service (
     duration text,
     service_description text,
     service_tags text[],
-    picture_url text[]
+    picture_url text[],
+    listing_timestamp timestamp(3) with time zone
 );
 
 

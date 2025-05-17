@@ -1,4 +1,5 @@
 import re
+import json
 
 from typing import Any
 from datetime import datetime
@@ -10,13 +11,13 @@ class General_user(BaseModel):
     username: str
     password: str
     email: str
-    phone_number: str = Field(min_length=10, max_length=10)
+    phone_number: str = Field(min_length=11, max_length=11)
     address: str | None
     is_cleaner: bool
     service_id_list: list[int] | None
     profile_description: str | None
     picture_url: str
-    preferences: dict
+    preferences: dict[str, Any] = Field(default_factory=dict)
 
     @field_validator('email')
     def enforce_email(cls, v: str):
@@ -27,6 +28,8 @@ class General_user(BaseModel):
         if not result and v.count("@") > 1:
 
             raise Exception("Invalid input for field 'email'.")
+        
+        return v
 
     @field_validator('phone_number')
     def enforce_phone_number(cls, v):
@@ -34,9 +37,22 @@ class General_user(BaseModel):
         pattern = r"^\+?[1-9]\d{1,14}$"
         result = bool(re.match(pattern, v))
 
-        if not v:
+        if not result:
 
             raise Exception("Invalid input for field 'phone_number'.")
+        
+        return v
+    
+    @field_validator('preferences')
+    def enforce_preferences(cls, v):
+
+        if isinstance(v, dict):
+
+            return json.dumps(v)
+
+        if isinstance(v, (str, bytes, bytearray)):
+
+            return json.loads(v)
 
 class Service(BaseModel):
 
@@ -66,6 +82,8 @@ class Feedback(BaseModel):
         if not result:
 
             raise Exception("Invalid input for field 'phone_number'.")
+        
+        return v
 
 class Payment(BaseModel):
 
@@ -84,6 +102,8 @@ class Payment(BaseModel):
 
             raise Exception("Invalid input for field 'payment_timestamp'.")
         
+        return v
+        
     @field_validator('booking_timestamp')
     def enforce(cls, v: datetime):
 
@@ -91,6 +111,7 @@ class Payment(BaseModel):
 
             raise Exception("Invalid input for field 'booking_timestamp'.")
         
+        return v
 class Review(BaseModel):
 
     review_id: int

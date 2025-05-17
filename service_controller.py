@@ -41,13 +41,21 @@ class ServiceController:
             # Database result processing
             if isinstance(callToDB_result, tuple) and callToDB_result:
 
-                result = Service.model_validate(callToDB_result)
+                cols = ('service_id', 'service_name', 'by_user_id', 'price', 'duration', 'service_description', 'service_tags', 'picture_url', 'listing_timestamp')
+                
+                data = dict(zip(cols, callToDB_result))
+
+                result = Service.model_validate(data)
 
             elif isinstance(callToDB_result, list) and callToDB_result:
 
                 for s in callToDB_result:
 
-                    service_list.append(Service.model_validate(s))
+                    cols = ('service_id', 'service_name', 'by_user_id', 'price', 'duration', 'service_description', 'service_tags', 'picture_url', 'listing_timestamp')
+                    
+                    data = dict(zip(cols, callToDB_result))
+
+                    service_list.append(Service.model_validate(data))
 
                 result = service_list
 
@@ -100,7 +108,11 @@ class ServiceController:
 
                 raise callToDB_result
             
-            result = Service.model_validate(callToDB_result)
+            cols = ('service_id', 'service_name', 'by_user_id', 'price', 'duration', 'service_description', 'service_tags', 'picture_url', 'listing_timestamp')
+            
+            data = dict(zip(cols, callToDB_result))
+
+            result = Service.model_validate(data)
 
         except Exception as e:
             
@@ -253,7 +265,11 @@ class ServiceController:
 
                 raise Exception("Unable to create service.")
             
-            result = Service.model_validate(callToDB_result)
+            cols = ('service_id', 'service_name', 'by_user_id', 'price', 'duration', 'service_description', 'service_tags', 'picture_url', 'listing_timestamp')
+            
+            data = dict(zip(cols, callToDB_result))
+
+            result = Service.model_validate(data)
 
         except Exception as e:
 

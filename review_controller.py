@@ -43,13 +43,21 @@ class ReviewController():
             # Database result processing
             if isinstance(callToDB_result, tuple) and callToDB_result:
 
-                result = Review.model_validate(callToDB_result)
+                cols = ("review_id", "review_score", "review_text", "by_user_id", "service_id")
+
+                data = dict(zip(cols, callToDB_result))
+                
+                result = Review.model_validate(data)
 
             elif isinstance(callToDB_result, list) and callToDB_result:
 
                 for s in callToDB_result:
 
-                    review_list.append(Review.model_validate(s))
+                    cols = ("review_id", "review_score", "review_text", "by_user_id", "service_id")
+
+                    data = dict(zip(cols, callToDB_result))
+                    
+                    review_list.append(Review.model_validate(data))
 
                 result = review_list
 
@@ -103,7 +111,11 @@ class ReviewController():
 
                 raise Exception("Unable to create review.")
             
-            result = Review.model_validate(callToDB_result)
+            cols = ("review_id", "review_score", "review_text", "by_user_id", "service_id")
+
+            data = dict(zip(cols, callToDB_result))
+            
+            result = Review.model_validate(data)
 
         except Exception as e:
 

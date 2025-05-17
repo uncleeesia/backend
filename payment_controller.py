@@ -46,7 +46,11 @@ class PaymentController():
 
                 raise Exception("Unable to create payment.")
             
-            result = Payment.model_validate(callToDB_result)
+            cols = ("payment_id", "service_id", "from_user_id", "to_user_id", "price", "payment_timestamp", "booking_timestamp")
+
+            data = dict(zip(cols, callToDB_result))
+            
+            result = Payment.model_validate(data)
 
         except Exception as e:
 
@@ -87,13 +91,21 @@ class PaymentController():
 
             if isinstance(callToDB_result, tuple):
 
-                result = Payment.model_validate(callToDB_result)
+                cols = ("payment_id", "service_id", "from_user_id", "to_user_id", "price", "payment_timestamp", "booking_timestamp")
+
+                data = dict(zip(cols, callToDB_result))
+                
+                result = Payment.model_validate(data)
 
             elif isinstance(callToDB_result, list):
 
                 for p in callToDB_result:
 
-                    payment_list.append(Payment.model_validate(p))
+                    cols = ("payment_id", "service_id", "from_user_id", "to_user_id", "price", "payment_timestamp", "booking_timestamp")
+
+                    data = dict(zip(cols, callToDB_result))
+                    
+                    payment_list.append(Payment.model_validate(data))
 
                 result = payment_list
 
