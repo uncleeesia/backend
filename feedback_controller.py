@@ -6,13 +6,12 @@ from models import Feedback
 
 class FeedbackController:
 
-    def __init__(self, DBTalker_Obj: DBTalker, Logger_Obj: Logger, Schema_Name: str):
+    def __init__(self, DBTalker_Obj: DBTalker, Schema_Name: str):
         
         self.dbt = DBTalker_Obj
-        self.logger = Logger_Obj
         self.schema = str.strip(Schema_Name)
 
-    def insert_feedback(self, feedback_detail: tuple):
+    def create_feedback(self, feedback_detail: dict) -> Feedback | Exception:
         """"""
 
         result = None
@@ -27,12 +26,11 @@ class FeedbackController:
 
                 raise Exception("Invalid or Missing Arguement.")
             
-            username = str.strip(str(feedback_detail[0]))
-            phone_number = str.strip(str(feedback_detail[1]))
-            feedback_text = str.strip(str(feedback_detail[2]))
+            # Insert fake feedback id into feedback_detail
+            pending_feedback = Feedback.model_validate(feedback_detail)
             
-            sql_command = sql.SQL("""INSERT INTO {}.feedback (username, phone_number, feedback_text) VALUES (%s, %s, %s) RETURNING feedback_id""").format(sql.Identifier(self.schema))
-            para = (username, phone_number, feedback_text)
+            sql_command = sql.SQL("""INSERT INTO {}.feedback (username, phone_number, feedback_text) VALUES (%(username)s. %(phone_number)s, %(feedback_text)s) RETURNING feedback_id""").format(sql.Identifier(self.schema))
+            para = pending_feedback.model_dump()
 
             callToDB_result = self.dbt.callToDB(sql_command, para)
 
@@ -46,13 +44,11 @@ class FeedbackController:
             
             else:
 
-                raise Exception("Unable to create user.")
+                raise Exception("Unable to create feedback.")
             
             result = True
 
         except Exception as e:
-
-            self.logger.error(e)
 
             result = e
 

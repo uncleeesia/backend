@@ -9,14 +9,13 @@ from models import General_user
 
 class UserController:
 
-    def __init__(self, DBTalker_Obj: DBTalker, Logger_Obj: Logger, Schema_Name: str):
+    def __init__(self, DBTalker_Obj: DBTalker, Schema_Name: str):
         
         self.dbt = DBTalker_Obj
-        self.logger = Logger_Obj
         self.schema = str.strip(Schema_Name)
         self.hash_setting = PasswordHasher(time_cost=1,memory_cost=64 * 1024,parallelism=4,hash_len=32,salt_len=10,)
 
-    def create_user(self, user_details: dict):
+    def create_user(self, user_details: dict) -> General_user | Exception:
         """"""
 
         result = None
@@ -34,8 +33,8 @@ class UserController:
             # Insert a fake user id into user_details 1st to use Pydantic model validation
             pending_user = General_user.model_validate(user_details)
             
-            sql_command = sql.SQL("""INSERT INTO {}.general_user (username, password, email, phone_number, address, is_cleaner, service_id_list, profile_description, picture_url) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING user_id, username, password, email, phone_number, address, is_cleaner, service_id_list, profile_description, picture_url""").format(sql.Identifier(self.schema))
-            para = (pending_user,)
+            sql_command = sql.SQL("""INSERT INTO {}.general_user (username, password, email, phone_number, address, is_cleaner, service_id_list, profile_description, picture_url) VALUES (%(usename)s, %(password)s, %(email)s, %(phone_number)s, %(address)s, %(is_cleaner)s, %(service_id_list)s, %(profile_description)s, %(picture_url)s) RETURNING user_id, username, password, email, phone_number, address, is_cleaner, service_id_list, profile_description, picture_url""").format(sql.Identifier(self.schema))
+            para = pending_user.model_dump()
 
             callToDB_result = self.dbt.callToDB(sql_command, para)
 
@@ -54,8 +53,6 @@ class UserController:
             result = General_user.model_validate(callToDB_result)
 
         except Exception as e:
-
-            self.logger.error(e)
 
             result = e
 
@@ -104,8 +101,6 @@ class UserController:
             
         except Exception as e:
 
-            self.logger.error(e)
-
             result = e
 
         finally:
@@ -149,8 +144,6 @@ class UserController:
             result = General_user.model_validate(db_results)
 
         except Exception as e:
-
-            self.logger.error(e)
 
             result = e
 
@@ -198,8 +191,6 @@ class UserController:
                 raise Exception("Failed too verify login.")
 
         except Exception as e:
-
-            self.logger.error(e)
 
             result = e
 
@@ -282,8 +273,6 @@ class UserController:
             result = user_details
 
         except Exception as e:
-
-            self.logger.error(e)
 
             result = e
 

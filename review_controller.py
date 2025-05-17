@@ -6,13 +6,12 @@ from models import Review
 
 class ReviewController():
 
-    def __init__(self, DBTalker_Obj: DBTalker, Logger_Obj: Logger, Schema_Name: str):
+    def __init__(self, DBTalker_Obj: DBTalker, Schema_Name: str):
         
         self.dbt = DBTalker_Obj
-        self.logger = Logger_Obj
         self.schema = str.strip(Schema_Name)
 
-    def extract_review(self, review_id: int | None, user_id: int | None, service_id: int | None):
+    def extract_review(self, review_id: int | None, user_id: int | None, service_id: int | None) -> Review | list[Review] | Exception:
         """"""
 
         result = None
@@ -38,33 +37,31 @@ class ReviewController():
 
                 raise Exception("Invalid or missing arguements.")
             
-            db_results = self.dbt.callToDB(sql_command, para)
+            callToDB_result = self.dbt.callToDB(sql_command, para)
             review_list = []
 
             # Database result processing
-            if isinstance(db_results, tuple) and db_results:
+            if isinstance(callToDB_result, tuple) and callToDB_result:
 
-                result = Review.model_validate(db_results)
+                result = Review.model_validate(callToDB_result)
 
-            elif isinstance(db_results, list) and db_results:
+            elif isinstance(callToDB_result, list) and callToDB_result:
 
-                for s in db_results:
+                for s in callToDB_result:
 
                     review_list.append(Review.model_validate(s))
 
                 result = review_list
 
-            elif isinstance(db_results, str) and db_results == "":
+            elif isinstance(callToDB_result, str) and callToDB_result == "":
 
                 raise Exception("Unable to find review.")
             
-            elif isinstance(db_results, Exception):
+            elif isinstance(callToDB_result, Exception):
 
-                raise db_results
+                raise callToDB_result
 
         except Exception as e:
-
-            self.logger.error(e)
 
             result = e
 
@@ -72,15 +69,25 @@ class ReviewController():
 
             return result
 
-    def insert_review(self, review_details: Review):
+    def create_review(self, review_details: dict) -> Review | Exception:
         """"""
 
         result = None
 
         try:
 
-            sql_command = sql.SQL("""INSERT INTO {}.review review_score review_score=%(review_score)s, review_text=%(review_text)s, by_user_id=%(by_user_id)s, service_id=%(service_id)s""").format(sql.Identifier(self.schema))
-            para = review_details.model_dump()
+            if review_details and review_details.__len__ > 0:
+
+                pass
+
+            else:
+
+                raise Exception("Invalid or missing arguements.")
+            
+            pending_review = Review.model_validate(review_details)
+
+            sql_command = sql.SQL("""INSERT INTO {}.review (review_score, review_text, by_user_id, service_id) VALUES (%(review_score)s, %(review_text)s, %(by_user_id)s, %(service_id)s) RETURNING review_id, review_score, review_text, by_user_id, service_id""").format(sql.Identifier(self.schema))
+            para = pending_review.model_dump()
 
             callToDB_result = self.dbt.callToDB(sql_command, para)
 
@@ -94,13 +101,11 @@ class ReviewController():
             
             else:
 
-                raise Exception("Unable to create user.")
+                raise Exception("Unable to create review.")
             
-            result = True
+            result = Review.model_validate(callToDB_result)
 
         except Exception as e:
-
-            self.logger.error(e)
 
             result = e
 
