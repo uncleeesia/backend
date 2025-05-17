@@ -11,7 +11,7 @@ class ReviewController():
         self.dbt = DBTalker_Obj
         self.schema = str.strip(Schema_Name)
 
-    def extract_review(self, review_id: int | None = None, user_id: int | None = None, service_id: int | None = None) -> list[Review] | Exception:
+    def extract_review(self, review_id: int | None = None, user_id: int | None = None, by_user_id: int | None = None) -> list[Review] | Exception:
         """"""
 
         result = None
@@ -28,10 +28,10 @@ class ReviewController():
                 sql_command = sql.SQL("SELECT review_id, review_score, review_text, by_user_id, service_id FROM {}.review WHERE by_user_id = %s").format(sql.Identifier(self.schema))
                 para = (user_id,)
 
-            elif service_id:
+            elif by_user_id:
 
-                sql_command = sql.SQL("SELECT review_id, review_score, review_text, by_user_id, service_id FROM {}.review r inner join {}.service s on r.service_id = s.service_id WHERE s.by_user_id = %s").format(sql.Identifier(self.schema),sql.Identifier(self.schema))
-                para = (service_id,)
+                sql_command = sql.SQL("SELECT review_id, review_score, review_text, by_user_id, service_id FROM {}.review WHERE by_user_id = %s").format(sql.Identifier(self.schema))
+                para = (by_user_id,)
 
             else:
 
@@ -47,7 +47,7 @@ class ReviewController():
 
                 data = dict(zip(cols, callToDB_result))
                 
-                review_list.append(data)
+                review_list.append(Review.model_validate(data))
 
             elif isinstance(callToDB_result, list) and callToDB_result:
 
@@ -57,7 +57,7 @@ class ReviewController():
 
                     data = dict(zip(cols, s))
                     
-                    review_list.append(data)
+                    review_list.append(Review.model_validate(data))
 
             elif isinstance(callToDB_result, str) and callToDB_result == "":
 

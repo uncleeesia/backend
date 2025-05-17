@@ -582,9 +582,9 @@ def get_reviews():
     try:
         
         # some logic to get reviews tagged to specific services
-        service_id = request.args.get('service_id', type=int)
+        by_user_id = request.args.get('by_user_id', type=int)
 
-        if isinstance(service_id, int):
+        if isinstance(by_user_id, int):
 
             pass
 
@@ -592,7 +592,7 @@ def get_reviews():
 
             raise Exception("Invalid value for service id.")
         
-        review_list = review_controller.extract_review(service_id=service_id)
+        review_list = review_controller.extract_review(by_user_id=by_user_id)
 
         if isinstance(review_list, list):
 
