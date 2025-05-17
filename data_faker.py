@@ -36,7 +36,18 @@ def create_fake_users():
         service_id_list = []
         profile_description = fake.sentence(nb_words=10, variable_nb_words=False)
         picture_url = ""
-        preferences = {"theme": "light"}
+        preferences = {
+            "id": 1,
+            "theme": "light",
+            "House Cleaning": False,
+            "Car Cleaning": False,
+            "Bathroom Cleaning": True,
+            "Window Cleaning": False,
+            "Indonesian": True,
+            "Filipino": False,
+            "Burmese": False,
+            "Vietnamese": False,
+        }
 
         user_dict = {
             "user_id": 0, 
