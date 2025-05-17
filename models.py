@@ -1,6 +1,7 @@
 import re
 import json
 
+from decimal import Decimal
 from typing import Any
 from datetime import datetime
 from pydantic import BaseModel, Field, field_validator
@@ -59,7 +60,7 @@ class Service(BaseModel):
     service_id: int
     service_name: str
     by_user_id: int
-    price: float = Field(decimal_places=2)
+    price: Decimal = Field(decimal_places=2)
     duration: str
     service_description: str
     service_tags: list[str]
@@ -91,7 +92,7 @@ class Payment(BaseModel):
     service_id: int
     from_user_id: int
     to_user_id: int
-    price: float = Field(decimal_places=2)
+    price: Decimal = Field(decimal_places=2)
     payment_timestamp: datetime
     booking_timestamp: datetime
 
