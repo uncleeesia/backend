@@ -232,7 +232,7 @@ class UserController:
 
         try:
 
-            if user_details and user_details.__len__ > 0:
+            if user_details and len(user_details) > 0:
 
                 pass
 
@@ -251,7 +251,7 @@ class UserController:
             username_pattern = r"[^a-zA-Z0-9]"
 
             #Check Username
-            if bool(re.match(pattern=username_pattern, string=unverified_username)) and unverified_username.__len__ >= 5:
+            if bool(re.match(pattern=username_pattern, string=unverified_username)) and len(unverified_username) >= 5:
 
                 pass
 
@@ -260,7 +260,7 @@ class UserController:
                 raise Exception("Invalid input for field 'username'.")
 
             # Check password
-            if bool(re.match(pattern=password_pattern, string=unverified_password)) and unverified_password.__len__ >= 8:
+            if bool(re.match(pattern=password_pattern, string=unverified_password)) and len(unverified_password) >= 8:
 
                 pass
 

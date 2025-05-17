@@ -129,7 +129,7 @@ class ServiceController:
 
         try:
 
-            if list_of_service and list_of_service.__len__ > 0:
+            if list_of_service and len(list_of_service) > 0:
 
                 pass
 
@@ -137,7 +137,7 @@ class ServiceController:
 
                 raise Exception("Invalid or Missing Arguement.")
             
-            if sorting_type and sorting_type.__len__ > 0:
+            if sorting_type:
 
                 pass
 
@@ -162,7 +162,7 @@ class ServiceController:
 
                     most_popular = 0
 
-                    if service_payments.__len__ >= most_popular:
+                    if len(service_payments) >= most_popular:
 
                         list_of_service.insert(0, s)
                         most_popular = service_payments.__len__
