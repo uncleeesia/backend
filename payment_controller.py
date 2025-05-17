@@ -103,7 +103,7 @@ class PaymentController():
 
                     cols = ("payment_id", "service_id", "from_user_id", "to_user_id", "price", "payment_timestamp", "booking_timestamp")
 
-                    data = dict(zip(cols, callToDB_result))
+                    data = dict(zip(cols, p))
                     
                     payment_list.append(Payment.model_validate(data))
 

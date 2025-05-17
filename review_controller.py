@@ -55,7 +55,7 @@ class ReviewController():
 
                     cols = ("review_id", "review_score", "review_text", "by_user_id", "service_id")
 
-                    data = dict(zip(cols, callToDB_result))
+                    data = dict(zip(cols, s))
                     
                     review_list.append(Review.model_validate(data))
 

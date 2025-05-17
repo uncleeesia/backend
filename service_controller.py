@@ -22,17 +22,17 @@ class ServiceController:
 
             if service_id:
 
-                sql_command = sql.SQL("""SELECT service_id, service_name, by_user_id, price, duration, sercice_description, service_tags, picture_url, listing_timestamp FROM {}.service WHERE service_id = %s""").format(sql.Identifier(self.schema))
+                sql_command = sql.SQL("""SELECT service_id, service_name, by_user_id, price, duration, service_description, service_tags, picture_url, listing_timestamp FROM {}.service WHERE service_id = %s""").format(sql.Identifier(self.schema))
                 para = (service_id,)
 
             elif user_id:
 
-                sql_command = sql.SQL("""SELECT service_id, service_name, by_user_id, price, duration, sercice_description, service_tags, picture_url, listing_timestamp FROM {}.service WHERE by_user_id = %s""").format(sql.Identifier(self.schema))
+                sql_command = sql.SQL("""SELECT service_id, service_name, by_user_id, price, duration, service_description, service_tags, picture_url, listing_timestamp FROM {}.service WHERE by_user_id = %s""").format(sql.Identifier(self.schema))
                 para = (user_id,)
 
             else:
 
-                sql_command = sql.SQL("""SELECT service_id, service_name, by_user_id, price, duration, sercice_description, service_tags, picture_url, listing_timestamp FROM {}.service""").format(sql.Identifier(self.schema))
+                sql_command = sql.SQL("""SELECT service_id, service_name, by_user_id, price, duration, service_description, service_tags, picture_url, listing_timestamp FROM {}.service""").format(sql.Identifier(self.schema))
                 para = ()
 
             callToDB_result = self.dbt.callToDB(sql_command, para)
@@ -53,7 +53,7 @@ class ServiceController:
 
                     cols = ('service_id', 'service_name', 'by_user_id', 'price', 'duration', 'service_description', 'service_tags', 'picture_url', 'listing_timestamp')
                     
-                    data = dict(zip(cols, callToDB_result))
+                    data = dict(zip(cols, s))
 
                     service_list.append(Service.model_validate(data))
 
