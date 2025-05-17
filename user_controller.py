@@ -69,7 +69,7 @@ class UserController:
 
             return result
 
-    def extract_user(self, user_id: int | None = None, email: str | None = None, is_cleaner: bool | None = None) -> General_user | Exception:
+    def extract_user(self, user_id: int | None = None, email: str | None = None, is_cleaner: bool | None = None) -> list[General_user] | Exception:
         """"""
 
         result = None
