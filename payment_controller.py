@@ -95,7 +95,7 @@ class PaymentController():
 
                 data = dict(zip(cols, callToDB_result))
                 
-                result = [Payment.model_validate(data)]
+                result = payment_list.append(Payment.model_validate(data))
 
             elif isinstance(callToDB_result, list):
 

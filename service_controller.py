@@ -45,7 +45,7 @@ class ServiceController:
                 
                 data = dict(zip(cols, callToDB_result))
 
-                result = Service.model_validate(data)
+                result = service_list.append(Service.model_validate(data))
 
             elif isinstance(callToDB_result, list) and callToDB_result:
 

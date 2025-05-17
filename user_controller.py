@@ -69,7 +69,7 @@ class UserController:
 
             return result
 
-    def extract_user(self, user_id: int | None = None, email: str | None = None) -> General_user | Exception:
+    def extract_user(self, user_id: int | None = None, email: str | None = None, is_cleaner: bool | None = None) -> General_user | Exception:
         """"""
 
         result = None
@@ -87,16 +87,31 @@ class UserController:
                 sql_command = sql.SQL("""SELECT user_id. username, password, email, phone_number, address, is_cleaner, service_id_list, profile_description, picture_url, preferences FROM {}.general_user WHERE email = %s""").format(sql.Identifier(self.schema))
                 para = (email,)
 
+            elif isinstance(is_cleaner, bool):
+
+                sql_command = sql.SQL("""SELECT user_id. username, password, email, phone_number, address, is_cleaner, service_id_list, profile_description, picture_url, preferences FROM {}.general_user WHERE is_cleaner = %s""").format(sql.Identifier(self.schema))
+                para = (is_cleaner,)
+
             else:
 
                 raise Exception("Invalid or missing arguements.")
 
             callToDB_result = self.dbt.callToDB(sql_command, para)
+            user_list = []
 
             # Database result processing
             if isinstance(callToDB_result, tuple) and callToDB_result:
 
-                pass
+                cols = (
+                    "user_id", "username", "password", "email",
+                    "phone_number", "address", "is_cleaner",
+                    "service_id_list", "profile_description",
+                    "picture_url", "preferences"
+                )
+
+                data = dict(zip(cols, callToDB_result))
+                
+                result = user_list.append(General_user.model_validate(data))
 
             elif isinstance(callToDB_result, str) and callToDB_result == "":
 
