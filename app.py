@@ -244,22 +244,27 @@ def get_services():
 
                 raise Exception(f"Unable to get services for cleaner {user.username}.")
             
-            sorted_service_list = sevice_controller.sort_service(list_of_service=service_list)
+            # sorted_service_list = sevice_controller.sort_service(list_of_service=service_list)
 
-            if isinstance(sorted_service_list, list):
+            # if isinstance(sorted_service_list, list):
 
-                pass
+            #     pass
 
-            else:
+            # else:
 
-                raise Exception("Unable to sort services by default type.")
+            #     raise Exception("Unable to sort services by default type.")
             
-            temp_service_list = [service.model_dump(mode='json') for service in sorted_service_list]
+            # temp_service_list = [service.model_dump(mode='json') for service in sorted_service_list]
 
+            # response_body.append({
+            #     "cleaner": user.model_dump(mode="json"),
+            #     "service_list": temp_service_list
+            # })
             response_body.append({
                 "cleaner": user.model_dump(mode="json"),
-                "service_list": temp_service_list
+                "service_list": service_list
             })
+
 
         result = jsonify({"serviceProviders": response_body}), 200
 
