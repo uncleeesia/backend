@@ -3,15 +3,12 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 # Back End imports
-import json
-
 from dbtalker_psql import DBTalker
 from user_controller import UserController
 from service_controller import ServiceController
 from review_controller import ReviewController
 from payment_controller import PaymentController
 from feedback_controller import FeedbackController
-from models import General_user, Service, Review, Payment, Feedback
 
 app = Flask(__name__)
 CORS(app)
