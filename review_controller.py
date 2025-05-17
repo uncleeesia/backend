@@ -30,7 +30,7 @@ class ReviewController():
 
             elif service_id:
 
-                sql_command = sql.SQL("SELECT review_id, review_score, review_text, by_user_id, service_id FROM {}.review WHERE service_id = %s").format(sql.Identifier(self.schema))
+                sql_command = sql.SQL("SELECT review_id, review_score, review_text, by_user_id, service_id FROM {}.review r inner join {}.service s on r.service_id = s.service_id WHERE s.by_user_id = %s").format(sql.Identifier(self.schema),sql.Identifier(self.schema))
                 para = (service_id,)
 
             else:
