@@ -41,7 +41,7 @@ class ServiceController:
             # Database result processing
             if isinstance(callToDB_result, tuple) and callToDB_result:
 
-                cols = ('username','service_id', 'service_name', 'by_user_id', 'price', 'duration', 'service_description', 'service_tags', 's.picture_url', 'listing_timestamp')
+                cols = ('username','service_id', 'service_name', 'by_user_id', 'price', 'duration', 'service_description', 'service_tags', 'picture_url', 'listing_timestamp')
                 
                 data = dict(zip(cols, callToDB_result))
 
@@ -51,7 +51,7 @@ class ServiceController:
 
                 for s in callToDB_result:
 
-                    cols = ('username','service_id', 'service_name', 'by_user_id', 'price', 'duration', 'service_description', 'service_tags', 's.picture_url', 'listing_timestamp')
+                    cols = ('username','service_id', 'service_name', 'by_user_id', 'price', 'duration', 'service_description', 'service_tags', 'picture_url', 'listing_timestamp')
                     
                     data = dict(zip(cols, s))
 
