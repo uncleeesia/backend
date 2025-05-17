@@ -9,6 +9,7 @@ from service_controller import ServiceController
 from review_controller import ReviewController
 from payment_controller import PaymentController
 from feedback_controller import FeedbackController
+from models import General_user
 
 app = Flask(__name__)
 CORS(app)
