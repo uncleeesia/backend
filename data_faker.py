@@ -151,5 +151,3 @@ def create_fake_payment():
             review_controller = PaymentController(dbt_obj, schema_name)
 
             review_controller.create_payment(payment_dict)
-
-create_fake_payment()
