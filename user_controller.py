@@ -79,17 +79,17 @@ class UserController:
             # Arguement Check
             if user_id and user_id > 0:
                 
-                sql_command = sql.SQL("""SELECT user_id. username, password, email, phone_number, address, is_cleaner, service_id_list, profile_description, picture_url, preferences FROM {}.general_user WHERE user_id = %s""").format(sql.Identifier(self.schema))
+                sql_command = sql.SQL("""SELECT user_id, username, password, email, phone_number, address, is_cleaner, service_id_list, profile_description, picture_url, preferences FROM {}.general_user WHERE user_id = %s""").format(sql.Identifier(self.schema))
                 para = (user_id,)
 
             elif email:
 
-                sql_command = sql.SQL("""SELECT user_id. username, password, email, phone_number, address, is_cleaner, service_id_list, profile_description, picture_url, preferences FROM {}.general_user WHERE email = %s""").format(sql.Identifier(self.schema))
+                sql_command = sql.SQL("""SELECT user_id, username, password, email, phone_number, address, is_cleaner, service_id_list, profile_description, picture_url, preferences FROM {}.general_user WHERE email = %s""").format(sql.Identifier(self.schema))
                 para = (email,)
 
             elif isinstance(is_cleaner, bool):
 
-                sql_command = sql.SQL("""SELECT user_id. username, password, email, phone_number, address, is_cleaner, service_id_list, profile_description, picture_url, preferences FROM {}.general_user WHERE is_cleaner = %s""").format(sql.Identifier(self.schema))
+                sql_command = sql.SQL("""SELECT user_id, username, password, email, phone_number, address, is_cleaner, service_id_list, profile_description, picture_url, preferences FROM {}.general_user WHERE is_cleaner = %s""").format(sql.Identifier(self.schema))
                 para = (is_cleaner,)
 
             else:
