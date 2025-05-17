@@ -119,4 +119,4 @@ class Review(BaseModel):
     review_score: int
     review_text: str
     user_id: int
-    service: int
+    service_id: int

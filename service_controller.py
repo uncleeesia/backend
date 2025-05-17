@@ -248,7 +248,7 @@ class ServiceController:
             
             pending_service = Service.model_validate(service_details)
 
-            sql_command = sql.SQL("""INSERT INTO {}.service (service_name, by_user_id, price, duration, service_description, service_tags, picture_url) VALUES (%(service_name)s, %(by_user_id)s, %(price)s, %(duration)s, %(service_description)s, %(service_tags)s, %(picture_url)s) RETURNING service_id, service_name, by_user_id, price, duration, service_description, service_tags, picture_url""").format(sql.Identifier(self.schema))
+            sql_command = sql.SQL("""INSERT INTO {}.service (service_name, by_user_id, price, duration, service_description, service_tags, picture_url, listing_timestamp) VALUES (%(service_name)s, %(by_user_id)s, %(price)s, %(duration)s, %(service_description)s, %(service_tags)s, %(picture_url)s, %(listing_timestamp)s) RETURNING service_id, service_name, by_user_id, price, duration, service_description, service_tags, picture_url, listing_timestamp""").format(sql.Identifier(self.schema))
             para = pending_service.model_dump()
 
             callToDB_result = self.dbt.callToDB(sql_command, para)
