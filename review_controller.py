@@ -11,7 +11,7 @@ class ReviewController():
         self.dbt = DBTalker_Obj
         self.schema = str.strip(Schema_Name)
 
-    def extract_review(self, review_id: int | None, user_id: int | None, service_id: int | None) -> Review | list[Review] | Exception:
+    def extract_review(self, review_id: int | None, user_id: int | None, service_id: int | None) -> list[Review] | Exception:
         """"""
 
         result = None
@@ -30,7 +30,7 @@ class ReviewController():
 
             elif service_id:
 
-                sql_command = sql.SQL("SELECT review_id, review_score, review_text, by_user_id, service_id FROM {}.review WHERE servic_id = %s").format(sql.Identifier(self.schema))
+                sql_command = sql.SQL("SELECT review_id, review_score, review_text, by_user_id, service_id FROM {}.review WHERE service_id = %s").format(sql.Identifier(self.schema))
                 para = (service_id,)
 
             else:
@@ -47,7 +47,7 @@ class ReviewController():
 
                 data = dict(zip(cols, callToDB_result))
                 
-                result = Review.model_validate(data)
+                result = [Review.model_validate(data)]
 
             elif isinstance(callToDB_result, list) and callToDB_result:
 

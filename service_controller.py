@@ -145,49 +145,61 @@ class ServiceController:
 
                 sorting_type = "popularity"
 
-            for s in list_of_service:
+            temp_service_list = []
 
-                # Call review controller here to get reviews
-                review_controller = ReviewController(self.dbt, self.schema)
-                
-                service_reviews = review_controller.extract_review(review_id=None, user_id=None, service_id=s.service_id)
+            # Sort by number of payment
+            if str.strip(str.lower(sorting_type)) == "popularity":
 
-                # Call payment controller here to get payments
-                payment_controller = PaymentController(self.dbt, self.schema)
+                for s in list_of_service:
 
-                service_payments = payment_controller.extract_payment(service_id=s.service_id)
-            
-                # Sort by number of payment
-                if str.strip(str.lower(sorting_type)) == "popularity":
+                    # Call payment controller here to get payments
+                    payment_controller = PaymentController(self.dbt, self.schema)
+
+                    service_payments = payment_controller.extract_payment(service_id=s.service_id, from_user_id=None, by_user_id=None)
 
                     most_popular = 0
 
                     if len(service_payments) >= most_popular:
 
-                        list_of_service.insert(0, s)
+                        temp_service_list.insert(0, s)
                         most_popular = service_payments.__len__
 
                     else:
 
-                        list_of_service.append(s)
+                        temp_service_list.append(s)
 
-                # Sort by listing timestamp
-                elif str.strip(str.lower(sorting_type)) == "newest":
+                result = temp_service_list
 
-                    list_of_service.sort(key=lambda service: service.listing_timestamp, reverse=True)
+            # Sort by listing timestamp
+            elif str.strip(str.lower(sorting_type)) == "newest":
 
-                # Sort by name smallest
-                elif str.strip(str.lower(sorting_type)) == "name_small":
+                list_of_service.sort(key=lambda service: service.listing_timestamp, reverse=True)
 
-                    list_of_service.sort(key=lambda service: service.service_name, reverse=False)
+                result = list_of_service
 
-                # Sort by name biggest
-                elif str.strip(str.lower(sorting_type)) == "name_big":
+            # Sort by name smallest
+            elif str.strip(str.lower(sorting_type)) == "name_small":
 
-                    list_of_service.sort(key=lambda service: service.service_name, reverse=True)      
+                list_of_service.sort(key=lambda service: service.service_name, reverse=False)
 
-                # Sort by review score followed by number of reviews
-                elif str.strip(str.lower(sorting_type)) == "rating":
+                result = list_of_service
+
+            # Sort by name biggest
+            elif str.strip(str.lower(sorting_type)) == "name_big":
+
+                list_of_service.sort(key=lambda service: service.service_name, reverse=True)      
+
+                result = list_of_service
+
+            # Sort by review score followed by number of reviews
+            elif str.strip(str.lower(sorting_type)) == "rating":
+
+                for s in list_of_service:
+
+                    # Call review controller here to get reviews
+                    review_controller = ReviewController(self.dbt, self.schema)
+                    
+                    service_reviews = review_controller.extract_review(review_id=None, user_id=None, service_id=s.service_id)
                     
                     average_rating = 0
                     total_rating = 0
@@ -198,30 +210,30 @@ class ServiceController:
 
                             total_rating += r.review_score
 
+                        service_average_rating = total_rating / len(service_reviews)
+
                     else:
 
-                        total_rating = service_reviews.review_score
-
-                    service_average_rating = total_rating / service_reviews.__len__
+                        service_average_rating = 0
 
                     if service_average_rating >= average_rating:
 
-                        list_of_service.insert(0, s)
+                        temp_service_list.insert(0, s)
 
                         average_rating = service_average_rating
 
                     else:
 
-                        list_of_service.append(s)
+                        temp_service_list.append(s)
 
-                # Sort by price
-                elif str.strip(str.lower(sorting_type)) == "price":
+                result = temp_service_list
 
-                    list_of_service.sort(key=lambda service: service.price, reverse=True)  
+            # Sort by price
+            elif str.strip(str.lower(sorting_type)) == "price":
 
-                continue
+                list_of_service .sort(key=lambda service: service.price, reverse=True)  
 
-            result = list_of_service
+                result = list_of_service
 
         except Exception as e:
 

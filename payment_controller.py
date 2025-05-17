@@ -60,7 +60,7 @@ class PaymentController():
 
             return result
 
-    def extract_payment(self, service_id: int | None, from_user_id: int | None, by_user_id: int | None) -> Payment | list[Payment] | Exception:
+    def extract_payment(self, service_id: int | None, from_user_id: int | None, by_user_id: int | None) -> list[Payment] | Exception:
         """"""
 
         result = None
@@ -95,7 +95,7 @@ class PaymentController():
 
                 data = dict(zip(cols, callToDB_result))
                 
-                result = Payment.model_validate(data)
+                result = [Payment.model_validate(data)]
 
             elif isinstance(callToDB_result, list):
 
