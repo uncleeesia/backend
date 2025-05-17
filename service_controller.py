@@ -122,7 +122,7 @@ class ServiceController:
 
             return result
         
-    def sort_service(self, list_of_service: list[Service], sorting_type: str | None = None) -> list | Exception:
+    def sort_service(self, list_of_service: list[Service], sorting_type: str | None = None) -> list[Service] | Exception:
         """"""
 
         result = None
