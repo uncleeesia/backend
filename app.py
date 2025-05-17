@@ -500,19 +500,20 @@ def get_serviceById():
 
             raise Exception(f"Unable to get services.")
         
-        sorted_service_list = sevice_controller.sort_service(list_of_service=service_list)
+        # sorted_service_list = sevice_controller.sort_service(list_of_service=service_list)
 
-        if isinstance(sorted_service_list, list):
+        # if isinstance(sorted_service_list, list):
 
-            pass
+        #     pass
 
-        else:
+        # else:
 
-            raise Exception("Unable to sort services by default type.")
+        #     raise Exception("Unable to sort services by default type.")
         
-        temp_service_list = [service.model_dump(mode='json') for service in sorted_service_list]
+        # temp_service_list = [service.model_dump(mode='json') for service in sorted_service_list]
 
-        result = jsonify({"services": temp_service_list}), 200
+        # result = jsonify({"services": temp_service_list}), 200
+        result = jsonify({"services": service_list}), 200
 
     except Exception as e:
 
