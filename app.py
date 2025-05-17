@@ -55,6 +55,45 @@ def list_routes():
 #     # logic to update db
 #     return jsonify({"message": "Payment received", "data": data}), 200
 
+@app.route("/api/getUser", methods=["GET"])
+def get_user():
+    result = None
+
+    try: 
+        email = request.args.get('email', type=any)
+    
+        # Check if valid integer
+        if isinstance(email, any):
+
+            pass
+
+        else:
+
+            raise Exception("Invalid user id was given.")
+        
+        user_obj = user_controller.extract_user(email=email)
+
+        # Verify if it is a valid object
+        if isinstance(user_obj, list):
+
+            pass
+
+        else:
+
+            raise Exception("Unable to get user.")
+        
+        user = user_obj[0]
+        
+        result = jsonify({"user": user.model_dump(mode='json')}), 200
+
+    except Exception as e:
+
+        result = jsonify({"error": str(e)}), 400
+
+    finally:
+
+        return result
+
 @app.route("/api/getPreferences", methods=["GET"])
 def get_preferences():
 
