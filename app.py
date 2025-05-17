@@ -26,17 +26,17 @@ def list_routes():
         })
     return jsonify(output)
 
-@app.route("/api/feedback", methods=["POST"])
-def feedback():
-    data = request.get_json()
-    # logic to update db
-    return jsonify({"message": "Feedback received", "data": data}), 200
+# @app.route("/api/postFeedback", methods=["POST"])
+# def post_feedback():
+#     data = request.get_json()
+#     # logic to update db
+#     return jsonify({"message": "Feedback received", "data": data}), 200
 
-@app.route("/api/postPayment", methods=["POST"])
-def post_payment():
-    data = request.get_json()
-    # logic to update db
-    return jsonify({"message": "Payment received", "data": data}), 200
+# @app.route("/api/postPayment", methods=["POST"])
+# def post_payment():
+#     data = request.get_json()
+#     # logic to update db
+#     return jsonify({"message": "Payment received", "data": data}), 200
 
 @app.route("/api/getPreferences", methods=["GET"])
 def get_preferences():
