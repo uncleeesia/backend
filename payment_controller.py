@@ -60,7 +60,7 @@ class PaymentController():
 
             return result
 
-    def extract_payment(self, service_id: int | None, from_user_id: int | None, by_user_id: int | None) -> list[Payment] | Exception:
+    def extract_payment(self, service_id: int | None = None, from_user_id: int | None = None, by_user_id: int | None = None) -> list[Payment] | Exception:
         """"""
 
         result = None

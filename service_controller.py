@@ -13,7 +13,7 @@ class ServiceController:
         self.dbt = DBTalker_Obj
         self.schema = str.strip(Schema_Name)
 
-    def extract_service(self, service_id: int | None, user_id: int | None) -> Service | list | Exception:
+    def extract_service(self, service_id: int | None = None, user_id: int | None = None) -> Service | list | Exception:
         """"""
 
         result = None

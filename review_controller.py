@@ -11,7 +11,7 @@ class ReviewController():
         self.dbt = DBTalker_Obj
         self.schema = str.strip(Schema_Name)
 
-    def extract_review(self, review_id: int | None, user_id: int | None, service_id: int | None) -> list[Review] | Exception:
+    def extract_review(self, review_id: int | None = None, user_id: int | None = None, service_id: int | None = None) -> list[Review] | Exception:
         """"""
 
         result = None
