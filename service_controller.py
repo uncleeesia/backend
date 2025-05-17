@@ -22,17 +22,17 @@ class ServiceController:
 
             if service_id:
 
-                sql_command = sql.SQL("""SELECT DISTINCT username, service_id, service_name, by_user_id, price, duration, service_description, service_tags, picture_url, listing_timestamp FROM {}.service  s inner join {}.general_user u ON s.by_user_id = u.user_id WHERE service_id = %s""").format(sql.Identifier(self.schema),sql.Identifier(self.schema))
+                sql_command = sql.SQL("""SELECT DISTINCT username, service_id, service_name, by_user_id, price, duration, service_description, service_tags, s.picture_url, listing_timestamp FROM {}.service  s inner join {}.general_user u ON s.by_user_id = u.user_id WHERE service_id = %s""").format(sql.Identifier(self.schema),sql.Identifier(self.schema))
                 para = (service_id,)
 
             elif user_id:
 
-                sql_command = sql.SQL("""SELECT DISTINCT username, service_id, service_name, by_user_id, price, duration, service_description, service_tags, picture_url, listing_timestamp FROM {}.service  s inner join {}.general_user u ON s.by_user_id = u.user_id WHERE by_user_id = %s""").format(sql.Identifier(self.schema),sql.Identifier(self.schema))
+                sql_command = sql.SQL("""SELECT DISTINCT username, service_id, service_name, by_user_id, price, duration, service_description, service_tags, s.picture_url, listing_timestamp FROM {}.service  s inner join {}.general_user u ON s.by_user_id = u.user_id WHERE by_user_id = %s""").format(sql.Identifier(self.schema),sql.Identifier(self.schema))
                 para = (user_id,)
 
             else:
 
-                sql_command = sql.SQL("""SELECT DISTINCT username, service_id, service_name, by_user_id, price, duration, service_description, service_tags, picture_url, listing_timestamp FROM {}.service s inner join {}.general_user u ON s.by_user_id = u.user_id """).format(sql.Identifier(self.schema),sql.Identifier(self.schema))
+                sql_command = sql.SQL("""SELECT DISTINCT username, service_id, service_name, by_user_id, price, duration, service_description, service_tags, s.picture_url, listing_timestamp FROM {}.service s inner join {}.general_user u ON s.by_user_id = u.user_id """).format(sql.Identifier(self.schema),sql.Identifier(self.schema))
                 para = ()
 
             callToDB_result = self.dbt.callToDB(sql_command, para)
@@ -41,7 +41,7 @@ class ServiceController:
             # Database result processing
             if isinstance(callToDB_result, tuple) and callToDB_result:
 
-                cols = ('username','service_id', 'service_name', 'by_user_id', 'price', 'duration', 'service_description', 'service_tags', 'picture_url', 'listing_timestamp')
+                cols = ('username','service_id', 'service_name', 'by_user_id', 'price', 'duration', 'service_description', 'service_tags', 's.picture_url', 'listing_timestamp')
                 
                 data = dict(zip(cols, callToDB_result))
 
@@ -51,7 +51,7 @@ class ServiceController:
 
                 for s in callToDB_result:
 
-                    cols = ('username','service_id', 'service_name', 'by_user_id', 'price', 'duration', 'service_description', 'service_tags', 'picture_url', 'listing_timestamp')
+                    cols = ('username','service_id', 'service_name', 'by_user_id', 'price', 'duration', 'service_description', 'service_tags', 's.picture_url', 'listing_timestamp')
                     
                     data = dict(zip(cols, s))
 
