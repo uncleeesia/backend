@@ -89,7 +89,7 @@ class UserController:
 
             elif isinstance(is_cleaner, bool):
 
-                sql_command = sql.SQL("""SELECT user_id, username, password, email, phone_number, address, is_cleaner, service_id_list, profile_description, picture_url, preferences FROM {}.general_user u inner join csit314_schma.service s on u.user_id = s.by_user_id WHERE is_cleaner = %s""").format(sql.Identifier(self.schema))
+                sql_command = sql.SQL("""SELECT user_id, username, password, email, phone_number, address, is_cleaner, service_id_list, profile_description, u.picture_url, preferences FROM {}.general_user u inner join csit314_schma.service s on u.user_id = s.by_user_id WHERE is_cleaner = %s""").format(sql.Identifier(self.schema))
                 para = (is_cleaner,)
 
             else:
