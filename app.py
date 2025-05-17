@@ -26,6 +26,17 @@ def list_routes():
         })
     return jsonify(output)
 
+@app.route("/api/feedback", methods=["POST"])
+def feedback():
+    data = request.get_json()
+    # logic to update db
+    return jsonify({"message": "Feedback received", "data": data}), 200
+
+@app.route("/api/postPayment", methods=["POST"])
+def post_payment():
+    data = request.get_json()
+    # logic to update db
+    return jsonify({"message": "Payment received", "data": data}), 200
 
 @app.route("/api/getPreferences", methods=["GET"])
 def get_preferences():
@@ -308,9 +319,11 @@ def get_serviceById():
         return jsonify({"error": "Service not found"}), 404
     return jsonify({"services": services})
 
-@app.route("/api/getReviews", methods=["GET"])
+@app.route("/api/getAllReviewsById", methods=["GET"])
 def get_reviews():
     # some logic to get reviews tagged to specific services
+    service_provider_id = request.args.get('serviceId', type=int)
+    print(service_provider_id)
     reviews = [
         {
             "id": 1,
