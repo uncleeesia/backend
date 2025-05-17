@@ -47,7 +47,7 @@ class ReviewController():
 
                 data = dict(zip(cols, callToDB_result))
                 
-                review_list.append(Review.model_validate(data))
+                review_list.append(data)
 
             elif isinstance(callToDB_result, list) and callToDB_result:
 
@@ -57,7 +57,7 @@ class ReviewController():
 
                     data = dict(zip(cols, s))
                     
-                    review_list.append(Review.model_validate(data))
+                    review_list.append(data)
 
             elif isinstance(callToDB_result, str) and callToDB_result == "":
 
