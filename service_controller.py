@@ -150,7 +150,7 @@ class ServiceController:
                 # Call review controller here to get reviews
                 review_controller = ReviewController(self.dbt, self.schema)
                 
-                service_reviews = review_controller.extract_review(service_id=s.service_id)
+                service_reviews = review_controller.extract_review(review_id=None, user_id=None, service_id=s.service_id)
 
                 # Call payment controller here to get payments
                 payment_controller = PaymentController(self.dbt, self.schema)
