@@ -27,7 +27,7 @@ class ServiceController:
 
             elif user_id:
 
-                sql_command = sql.SQL("""SELECT DISTINCT username, service_id, service_name, by_user_id, price, duration, service_description, service_tags, s.picture_url, listing_timestamp FROM {}.service s inner join {}.general_user u ON s.by_user_id = u.user_id WHERE by_user_id = %s""").format(sql.Identifier(self.schema),sql.Identifier(self.schema))
+                sql_command = sql.SQL("""SELECT DISTINCT username, service_id, service_name, s.by_user_id, price, duration, service_description, service_tags, s.picture_url, listing_timestamp FROM {}.service s inner join {}.general_user u ON s.by_user_id = u.user_id WHERE s.by_user_id = %s""").format(sql.Identifier(self.schema),sql.Identifier(self.schema))
                 para = (user_id,)
 
             else:
