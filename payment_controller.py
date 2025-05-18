@@ -61,7 +61,7 @@ class PaymentController():
 
             return result
 
-    def extract_payment_for_report(user_id: int | None = None) -> list | Exception:
+    def extract_payment_for_report(self, user_id: int | None = None) -> list[PaymentReport] | Exception:
         """"""
 
         result = None
