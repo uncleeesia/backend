@@ -234,7 +234,7 @@ CREATE TABLE csit314_schma.service (
     service_id bigint NOT NULL,
     service_name text NOT NULL,
     by_user_id bigint NOT NULL,
-    price numeric(2,0),
+    price numeric(2,2),
     duration text,
     service_description text,
     service_tags text[],
