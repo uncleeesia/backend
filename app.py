@@ -480,7 +480,8 @@ def get_serviceById():
 
     try:
 
-        cleaner_id = request.args.get('service_id', type=int)
+        service_id = request.args.get('service_id', type=int)
+        cleaner_id = request.args.get('user_id', type=int)
 
         if isinstance(cleaner_id, int):
 
@@ -490,7 +491,10 @@ def get_serviceById():
 
             raise Exception("Invalid by_user_id was given.")
         
-        service_list = sevice_controller.extract_service(user_id=cleaner_id)
+        if  isinstance(cleaner_id,int):      
+            service_list = sevice_controller.extract_service(user_id=cleaner_id)
+        elif isinstance(service_id,int):
+            service_list = sevice_controller.extract_service(service_id=service_id)
 
         if isinstance(service_list, list):
 
