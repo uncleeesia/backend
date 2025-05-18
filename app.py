@@ -480,7 +480,7 @@ def get_serviceById():
 
     try:
 
-        cleaner_id = request.args.get('by_user_id', type=int)
+        cleaner_id = request.args.get('service_id', type=int)
 
         if isinstance(cleaner_id, int):
 
@@ -498,7 +498,7 @@ def get_serviceById():
 
         else:
 
-            raise Exception(f"Unable to get services.")
+            raise Exception("Unable to get services.")
         
         # sorted_service_list = sevice_controller.sort_service(list_of_service=service_list)
 
