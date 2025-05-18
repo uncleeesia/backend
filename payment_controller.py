@@ -82,7 +82,7 @@ class PaymentController():
                                         INNER JOIN {}.general_user AS user_to ON p.to_user_id = user_to.user_id
                                         LEFT JOIN {}.review AS r ON r.service_id = s.service_id 
                                         WHERE p.to_user_id = %s""").format(sql.Identifier(self.schema), sql.Identifier(self.schema), sql.Identifier(self.schema), sql.Identifier(self.schema), sql.Identifier(self.schema))
-                para = (user_id)
+                para = (user_id,)
 
             else:
 
