@@ -486,7 +486,9 @@ def get_serviceById():
         if isinstance(cleaner_id, int):
 
             pass
+        elif isinstance(service_id, int):
 
+            pass
         else:
 
             raise Exception("Invalid by_user_id was given.")
