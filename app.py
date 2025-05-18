@@ -160,7 +160,7 @@ def get_user():
         return result
 
 
-@app.route("/api/UpdateUserById", methods=["GET"])
+@app.route("/api/UpdateUserById", methods=["PUT"])
 def update_user_by_id():
     result = None
 
