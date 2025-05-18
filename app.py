@@ -61,17 +61,23 @@ def get_user():
 
     try: 
         email = request.args.get('email', type=str)
-    
+        user_id = request.args.get('user_id', type=int)
+        
         # Check if valid integer
         if isinstance(email, str):
 
             pass
-
+        if isinstance(user_id, int):
+            pass
         else:
 
             raise Exception("Invalid user id was given.")
         
-        user_obj = user_controller.extract_user(email=email)
+        if(user_id is None):
+            user_obj = user_controller.extract_user(email=email)
+        if(user_id is not None):
+            user_obj = user_controller.extract_user(user_id=user_id)
+
 
         # Verify if it is a valid object
         if isinstance(user_obj, list):
