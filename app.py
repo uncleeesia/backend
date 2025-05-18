@@ -491,9 +491,9 @@ def get_serviceById():
 
             raise Exception("Invalid by_user_id was given.")
         
-        if  isinstance(cleaner_id,int):      
+        if  isinstance(cleaner_id,int) and service_id is None:      
             service_list = sevice_controller.extract_service(user_id=cleaner_id)
-        elif isinstance(service_id,int):
+        elif isinstance(service_id,int) and cleaner_id is None:
             service_list = sevice_controller.extract_service(service_id=service_id)
 
         if isinstance(service_list, list):
