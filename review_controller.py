@@ -51,7 +51,7 @@ class ReviewController():
             # Database result processing
             if isinstance(callToDB_result, tuple) and callToDB_result:
 
-                cols = ("review_id", "review_score", "review_text", "by_user_id", "service_id")
+                cols = ("username","review_id", "review_score", "review_text", "by_user_id", "service_id")
 
                 data = dict(zip(cols, callToDB_result))
                 
@@ -61,7 +61,7 @@ class ReviewController():
 
                 for s in callToDB_result:
 
-                    cols = ("review_id", "review_score", "review_text", "by_user_id", "service_id")
+                    cols = ("username","review_id", "review_score", "review_text", "by_user_id", "service_id")
 
                     data = dict(zip(cols, s))
                     
