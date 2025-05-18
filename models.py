@@ -20,7 +20,8 @@ class General_user(BaseModel):
     profile_description: str | None
     picture_url: str
     preferences: dict[str, Any] = Field(default_factory=dict)
-
+    is_blacklist: bool = False
+    blacklist_reason: str | None
     @field_validator('email')
     def enforce_email(cls, v: str):
 

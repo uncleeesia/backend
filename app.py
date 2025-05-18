@@ -103,12 +103,15 @@ def get_user():
     try: 
         email = request.args.get('email', type=str)
         user_id = request.args.get('user_id', type=int)
-        
+        admin = request.args.get('admin', type=bool)
         # Check if valid integer
         if isinstance(email, str):
             pass
 
         elif isinstance(user_id, int):
+            pass
+
+        elif isinstance(admin, bool):
             pass
 
         else:
@@ -120,6 +123,8 @@ def get_user():
         if(user_id is not None):
             user_obj = user_controller.extract_user(user_id=user_id)
 
+        if(admin is not None):
+            user_obj = user_controller.extract_user(is_admin=admin)
         # Verify if it is a valid object
         if isinstance(user_obj, list):
 
