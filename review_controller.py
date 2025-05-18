@@ -30,7 +30,7 @@ class ReviewController():
 
             elif service_id:
 
-                sql_command = sql.SQL("SELECT review_id, review_score, review_text, by_user_id, service_id FROM {}.review WHERE by_user_id = %s").format(sql.Identifier(self.schema))
+                sql_command = sql.SQL("SELECT review_id, review_score, review_text, by_user_id, service_id FROM {}.review WHERE service_id = %s").format(sql.Identifier(self.schema))
                 para = (service_id,)
 
             else:
@@ -47,7 +47,7 @@ class ReviewController():
 
                 data = dict(zip(cols, callToDB_result))
                 
-                review_list.append(data)
+                review_list.append(Review.model_validate(data))
 
             elif isinstance(callToDB_result, list) and callToDB_result:
 
@@ -57,7 +57,7 @@ class ReviewController():
 
                     data = dict(zip(cols, s))
                     
-                    review_list.append(data)
+                    review_list.append(Review.model_validate(data))
 
             elif isinstance(callToDB_result, str) and callToDB_result == "":
 
