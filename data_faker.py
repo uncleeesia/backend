@@ -32,7 +32,7 @@ def create_fake_users():
         email = fake.email(safe=True)
         phone_num = "+6598125432"
         address = fake.address()
-        is_cleaner = random.choice([True, False])
+        is_cleaner = True
         service_id_list = []
         profile_description = fake.sentence(nb_words=10, variable_nb_words=False)
         picture_url = ""
@@ -71,11 +71,12 @@ def create_fake_users():
 
 def create_fake_service():
 
-    for _ in range(5):
+    for _ in range(10):
 
         service_name = fake.sentence(nb_words=2, variable_nb_words=False)
-        by_user_id = random.choice([1, 4, 6, 9, 10, 12, 13])
-        price = "40.50"
+        by_user_id = 6
+        # by_user_id = random.choice([1, 4, 6, 9, 10, 12, 13, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35])
+        price = "49.50"
         duration = "2 Hours"
         service_description = fake.sentence(nb_words=10, variable_nb_words=False)
         service_tags = [random.choice(["Deep Cleaning", "Window Cleaning", "Aircondition Cleaning", "Full Cleaning"])]
@@ -102,48 +103,46 @@ def create_fake_service():
         service_controller.create_service(service_dict)
 
 def create_fake_review():
-
-    for i in range(0, 5):
             
-            service_id_list = [2, 3, 4, 5, 6, 7]
+    service_id_list = [18, 19, 20, 21, 22, 23, 24, 25, 26, 27]
 
-            for  _ in range(5):
+    for  i in range(0, len(service_id_list)):
 
-                review_id = 0
-                review_score = random.randint(0, 10)
-                review_text = fake.sentence(nb_words=10, variable_nb_words=False)
-                user_id = random.choice([3, 5, 7, 8, 11])
-                service_id = service_id_list[i]
+        review_id = 0
+        review_score = random.randint(0, 10)
+        review_text = fake.sentence(nb_words=10, variable_nb_words=False)
+        user_id = random.choice([3, 5, 7, 8, 11, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25])
+        service_id = service_id_list[i]
 
-                review_dict = {
-                     "review_id": review_id,
-                     "review_score": review_score,
-                     "review_text": review_text,
-                     "by_user_id": user_id,
-                     "service_id": service_id
-                }
+        review_dict = {
+                "review_id": review_id,
+                "review_score": review_score,
+                "review_text": review_text,
+                "by_user_id": user_id,
+                "service_id": service_id
+        }
 
-                dbt_obj = DBTalker(api_key=api_key)
+        dbt_obj = DBTalker(api_key=api_key)
 
-                review_controller = ReviewController(dbt_obj, schema_name)
+        review_controller = ReviewController(dbt_obj, schema_name)
 
-                review_controller.create_review(review_dict)
+        review_controller.create_review(review_dict)
 
 def create_fake_payment():
      
      tz = pytz.timezone("Asia/Kuala_Lumpur")
      
-     cleaner_ids = [13,9,4,12,9,10]
+     cleaner_ids = [6]
      
-     for i in range(0, 5):
+     for i in range(0, (len(cleaner_ids))):
      
-        for _ in range(5):
+        for _ in range(10):
             
             payment_id = 0
-            service_id = random.choice([2, 3, 4, 5, 6, 7])
-            from_user_id = random.choice([3, 5, 7, 8, 11])
+            service_id = random.choice([18, 19, 20, 21, 22, 23, 24, 25, 26, 27])
+            from_user_id = random.choice([3, 5, 7, 8, 11, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25])
             to_user_id = cleaner_ids[i]
-            price = "40.50"
+            price = "47.50"
             payment_timestamp =  datetime.now(tz)
             booking_timestamp = datetime.now(tz)
 
@@ -162,3 +161,5 @@ def create_fake_payment():
             review_controller = PaymentController(dbt_obj, schema_name)
 
             review_controller.create_payment(payment_dict)
+
+create_fake_review()

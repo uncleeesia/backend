@@ -57,7 +57,6 @@ class General_user(BaseModel):
 
 class Service(BaseModel):
 
-    username: int
     service_id: int
     service_name: str
     by_user_id: int

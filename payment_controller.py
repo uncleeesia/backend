@@ -29,7 +29,7 @@ class PaymentController():
             # Insert fake payment id to use model validate
             pending_payment = Payment.model_validate(payment_details)
             
-            sql_command = sql.SQL("""INSERT INTO {}.payment (service_id, from_user_id, to_user_id, price, payment_timestamp, booking_timestamp) VALUES (%(service_id)s, %(from_user_id)s, %(to_user_id)s, %(price)s, %(payment_timestamp)s, %(booking_timestamp)s) RETURNING payment_id, service_id, from_user_id, to_user_id price, payment_timestamp, booking_timestamp""").format(sql.Identifier(self.schema))
+            sql_command = sql.SQL("""INSERT INTO {}.payment (service_id, from_user_id, to_user_id, price, payment_timestamp, booking_timestamp) VALUES (%(service_id)s, %(from_user_id)s, %(to_user_id)s, %(price)s, %(payment_timestamp)s, %(booking_timestamp)s) RETURNING payment_id, service_id, from_user_id, to_user_id, price, payment_timestamp, booking_timestamp""").format(sql.Identifier(self.schema))
             para = pending_payment.model_dump()
 
             callToDB_result = self.dbt.callToDB(sql_command, para)

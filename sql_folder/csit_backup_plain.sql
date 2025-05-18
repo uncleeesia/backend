@@ -153,7 +153,7 @@ CREATE TABLE csit314_schma.payment (
     service_id bigint NOT NULL,
     from_user_id bigint NOT NULL,
     to_user_id bigint NOT NULL,
-    price numeric(2,0),
+    price numeric(2,2),
     payment_timestamp timestamp(3) with time zone,
     booking_timestamp timestamp(3) with time zone
 );
