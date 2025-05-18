@@ -362,13 +362,9 @@ class UserController:
                 "blacklist_reason": blacklist_reason if blacklist_reason else None
             }
 
-            callToDB_result = self.dbt.callToDB(sql_command, para)
-
-            if isinstance(callToDB_result, Exception):
-                raise callToDB_result
-
-            result = 200
-
+            rows_affected = self.dbt.callToDB(sql_command, para)
+            return rows_affected
+           
         except Exception as e:
             result = e
 
