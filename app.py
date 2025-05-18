@@ -108,17 +108,19 @@ def get_user():
         if isinstance(email, str):
 
             pass
+
         if isinstance(user_id, int):
             pass
+
         else:
 
             raise Exception("Invalid user id was given.")
         
-        if(user_id is None):
+        if(email is not None):
             user_obj = user_controller.extract_user(email=email)
+
         if(user_id is not None):
             user_obj = user_controller.extract_user(user_id=user_id)
-
 
         # Verify if it is a valid object
         if isinstance(user_obj, list):
