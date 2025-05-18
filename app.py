@@ -125,6 +125,7 @@ def get_user():
 
         if(admin is not None):
             user_obj = user_controller.extract_user(is_admin=admin)
+            
         # Verify if it is a valid object
         if isinstance(user_obj, list):
 

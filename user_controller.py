@@ -98,7 +98,7 @@ class UserController:
                 para = (is_cleaner,)
 
             elif isinstance(is_admin, bool):
-                sql_command = sql.SQL("""SELECT DISTINCT user_id, username, password, email, phone_number, address, is_cleaner, service_id_list, profile_description, picture_url, preferences, is_blacklist, blacklist_reason FROM {}.general_user""").format(
+                sql_command = sql.SQL("""SELECT DISTINCT user_id, username, password, email, phone_number, address, is_cleaner, profile_description, picture_url, preferences, is_blacklist, blacklist_reason FROM {}.general_user""").format(
                     sql.Identifier(self.schema), sql.Identifier(self.schema))
                 para = (is_admin,)
             else:
