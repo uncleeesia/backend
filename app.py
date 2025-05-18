@@ -55,6 +55,47 @@ def list_routes():
 #     # logic to update db
 #     return jsonify({"message": "Payment received", "data": data}), 200
 
+@app.route("/api/getAllPaymentTransactionByUserId", methods=["GET"])
+def get_all_payment_transaction_by_user_id():
+
+    result = None
+
+    try:
+
+        user_id = request.args.get('user_id', type=int)
+
+        # Check if valid integer
+        if isinstance(user_id, int):
+
+            pass
+
+        else:
+
+            raise Exception("Invalid user id was given.")
+        
+        payment_list = payment_controller.extract_payment_for_report(user_id=user_id)
+
+        # Verify if it is a valid object
+        if isinstance(payment_list, list):
+
+            pass
+
+        else:
+
+            raise Exception("Unable to get payment transaction.")
+        
+        temp_payment_list = [payment.model_dump(mode='json') for payment in payment_list]
+
+        result = jsonify({"payment": temp_payment_list}), 200
+
+    except Exception as e:
+
+        result = jsonify({"error": str(e)}), 400
+
+    finally:
+
+        return result
+
 @app.route("/api/getUser", methods=["GET"])
 def get_user():
     result = None

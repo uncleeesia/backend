@@ -6,6 +6,7 @@ from typing import Any
 from datetime import datetime
 from pydantic import BaseModel, Field, field_validator
 
+
 class General_user(BaseModel):
 
     user_id: int
@@ -24,12 +25,12 @@ class General_user(BaseModel):
     def enforce_email(cls, v: str):
 
         pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
-        result =  bool(re.match(pattern, v))
+        result = bool(re.match(pattern, v))
 
         if not result and v.count("@") > 1:
 
             raise Exception("Invalid input for field 'email'.")
-        
+
         return v
 
     @field_validator('phone_number')
@@ -41,9 +42,9 @@ class General_user(BaseModel):
         if not result:
 
             raise Exception("Invalid input for field 'phone_number'.")
-        
+
         return v
-    
+
     @field_validator('preferences')
     def enforce_preferences(cls, v):
 
@@ -54,6 +55,7 @@ class General_user(BaseModel):
         if isinstance(v, (str, bytes, bytearray)):
 
             return json.loads(v)
+
 
 class Service(BaseModel):
 
@@ -66,7 +68,8 @@ class Service(BaseModel):
     service_tags: list[str]
     picture_url: list[str]
     listing_timestamp: datetime
-        
+
+
 class Feedback(BaseModel):
 
     feedback_id: int
@@ -83,8 +86,9 @@ class Feedback(BaseModel):
         if not result:
 
             raise Exception("Invalid input for field 'phone_number'.")
-        
+
         return v
+
 
 class Payment(BaseModel):
 
@@ -102,17 +106,31 @@ class Payment(BaseModel):
         if not v:
 
             raise Exception("Invalid input for field 'payment_timestamp'.")
-        
+
         return v
-        
+
     @field_validator('booking_timestamp')
     def enforce(cls, v: datetime):
 
         if not v:
 
             raise Exception("Invalid input for field 'booking_timestamp'.")
-        
+
         return v
+
+
+class PaymentReport(BaseModel):
+    payment_id: int
+    service_id: int
+    from_user_id: int
+    to_user_id: int
+    price: Decimal = Field(decimal_places=2)
+    payment_timestamp: datetime
+    booking_timestamp: datetime
+    review_score: int | None
+    by_user_id: int | None
+
+
 class Review(BaseModel):
 
     username: str
