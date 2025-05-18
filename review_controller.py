@@ -11,7 +11,7 @@ class ReviewController():
         self.dbt = DBTalker_Obj
         self.schema = str.strip(Schema_Name)
 
-    def extract_review(self, review_id: int | None = None, user_id: int | None = None, by_user_id: int | None = None) -> list[Review] | Exception:
+    def extract_review(self, review_id: int | None = None, user_id: int | None = None, service_id: int | None = None) -> list[Review] | Exception:
         """"""
 
         result = None
@@ -28,10 +28,10 @@ class ReviewController():
                 sql_command = sql.SQL("SELECT review_id, review_score, review_text, by_user_id, service_id FROM {}.review WHERE by_user_id = %s").format(sql.Identifier(self.schema))
                 para = (user_id,)
 
-            elif by_user_id:
+            elif service_id:
 
                 sql_command = sql.SQL("SELECT review_id, review_score, review_text, by_user_id, service_id FROM {}.review WHERE by_user_id = %s").format(sql.Identifier(self.schema))
-                para = (by_user_id,)
+                para = (service_id,)
 
             else:
 
