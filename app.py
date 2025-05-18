@@ -106,14 +106,12 @@ def get_user():
         
         # Check if valid integer
         if isinstance(email, str):
-
             pass
 
-        if isinstance(user_id, int):
+        elif isinstance(user_id, int):
             pass
 
         else:
-
             raise Exception("Invalid user id was given.")
         
         if(email is not None):
