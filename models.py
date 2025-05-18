@@ -115,7 +115,7 @@ class Payment(BaseModel):
         
         return v
 class Review(BaseModel):
-    username: str
+
     review_id: int
     review_score: int
     review_text: str
