@@ -120,12 +120,12 @@ def get_user():
         if(email is not None):
             user_obj = user_controller.extract_user(email=email)
 
-        if(user_id is not None):
+        elif(user_id is not None):
             user_obj = user_controller.extract_user(user_id=user_id)
 
-        if(admin is not None):
+        elif(admin is not None):
             user_obj = user_controller.extract_user(is_admin=admin)
-            
+
         # Verify if it is a valid object
         if isinstance(user_obj, list):
 
