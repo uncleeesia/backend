@@ -137,7 +137,14 @@ def get_user():
         
         user = user_obj[0]
         
-        result = jsonify({"user": user.model_dump(mode='json')}), 200
+        # If only one user expected
+        if user_id or email:
+            user = user_obj[0]
+            result = jsonify({"user": user.model_dump(mode='json')}), 200
+
+        # If multiple users expected
+        elif admin is not None:
+            result = jsonify({"users": [u.model_dump(mode='json') for u in user_obj]}), 200 
 
     except Exception as e:
 
