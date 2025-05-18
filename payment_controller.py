@@ -102,8 +102,8 @@ class PaymentController():
 
                 for p in callToDB_result:
 
-                    cols = ("user_from.username", "user_from.user_id", "user_to.username", "user_to.user_id", "s.service_id", "s.service_tags", 
-                        "p.price", "p.payment_timestamp", "p.booking_timestamp", "r.review_score", "r.by_user_id")
+                    cols = ("user_from.username", "user_from.user_id", "user_to.username", "user_to.user_id", "s.service_id", "s.service_tags",
+                            "p.price", "p.payment_timestamp", "p.booking_timestamp", "r.review_score", "r.by_user_id")
 
                     data = dict(zip(cols, p))
                     

@@ -120,16 +120,35 @@ class Payment(BaseModel):
 
 
 class PaymentReport(BaseModel):
-    payment_id: int
+    user_from_username: str
+    user_from_user_id: int
+    user_to_username: str
+    user_to_user_id: int
     service_id: int
-    from_user_id: int
-    to_user_id: int
+    service_tags: list[str]
     price: Decimal = Field(decimal_places=2)
     payment_timestamp: datetime
     booking_timestamp: datetime
-    review_score: int | None
-    by_user_id: int | None
+    review_score: int
+    by_user_id: int
+    review_text: str | None = None
+    @field_validator('payment_timestamp')
+    def enforce(cls, v: datetime):
 
+        if not v:
+
+            raise Exception("Invalid input for field 'payment_timestamp'.")
+
+        return v
+    @field_validator('booking_timestamp')
+    def enforce(cls, v: datetime):
+
+        if not v:
+
+            raise Exception("Invalid input for field 'booking_timestamp'.")
+
+        return v
+    
 
 class Review(BaseModel):
 
