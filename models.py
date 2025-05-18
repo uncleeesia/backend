@@ -131,7 +131,6 @@ class PaymentReport(BaseModel):
     booking_timestamp: datetime
     review_score: int
     by_user_id: int
-    review_text: str | None = None
     @field_validator('payment_timestamp')
     def enforce(cls, v: datetime):
 
