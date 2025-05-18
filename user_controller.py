@@ -337,3 +337,40 @@ class UserController:
         finally:
 
             return result
+
+    def update_blacklist_user(self, user_id: int, is_blacklist: bool, blacklist_reason: str | None) -> int | Exception:
+        """"""
+
+        result = None
+
+        try:
+            
+            if not (isinstance(user_id, int) and user_id > 0):
+
+                raise Exception("Invalid or missing arguments.")
+
+            sql_command = sql.SQL("""
+                UPDATE {}.general_user 
+                SET is_blacklist = %(is_blacklist)s, 
+                    blacklist_reason = %(blacklist_reason)s 
+                WHERE user_id = %(user_id)s
+            """).format(sql.Identifier(self.schema))
+
+            para = {
+                "user_id": user_id,
+                "is_blacklist": is_blacklist,
+                "blacklist_reason": blacklist_reason if blacklist_reason else None
+            }
+
+            callToDB_result = self.dbt.callToDB(sql_command, para)
+
+            if isinstance(callToDB_result, Exception):
+                raise callToDB_result
+
+            result = 200
+
+        except Exception as e:
+            result = e
+
+        finally:
+            return result

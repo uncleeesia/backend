@@ -14,7 +14,7 @@ from models import General_user
 app = Flask(__name__)
 CORS(app)
 
-api_key = "HRKU-4e9e0d78-2234-4999-8391-13e14ec05360" # Remove before zipping
+api_key = "HRKU-4e9e0d78-2234-4999-8391-13e14ec05360"  # Remove before zipping
 schema_name = "csit314_schma"
 
 # Creating of Objects
@@ -55,6 +55,7 @@ def list_routes():
 #     # logic to update db
 #     return jsonify({"message": "Payment received", "data": data}), 200
 
+
 @app.route("/api/getAllPaymentTransactionByUserId", methods=["GET"])
 def get_all_payment_transaction_by_user_id():
 
@@ -72,8 +73,9 @@ def get_all_payment_transaction_by_user_id():
         else:
 
             raise Exception("Invalid user id was given.")
-        
-        payment_list = payment_controller.extract_payment_for_report(user_id=user_id)
+
+        payment_list = payment_controller.extract_payment_for_report(
+            user_id=user_id)
 
         # Verify if it is a valid object
         if isinstance(payment_list, list):
@@ -83,8 +85,9 @@ def get_all_payment_transaction_by_user_id():
         else:
 
             raise Exception("Unable to get payment transaction.")
-        
-        temp_payment_list = [payment.model_dump(mode='json') for payment in payment_list]
+
+        temp_payment_list = [payment.model_dump(
+            mode='json') for payment in payment_list]
 
         result = jsonify({"payment": temp_payment_list}), 200
 
@@ -96,11 +99,12 @@ def get_all_payment_transaction_by_user_id():
 
         return result
 
+
 @app.route("/api/getUser", methods=["GET"])
 def get_user():
     result = None
 
-    try: 
+    try:
         email = request.args.get('email', type=str)
         user_id = request.args.get('user_id', type=int)
         admin = request.args.get('admin', type=bool)
@@ -116,14 +120,14 @@ def get_user():
 
         else:
             raise Exception("Invalid user id was given.")
-        
-        if(email is not None):
+
+        if (email is not None):
             user_obj = user_controller.extract_user(email=email)
 
-        elif(user_id is not None):
+        elif (user_id is not None):
             user_obj = user_controller.extract_user(user_id=user_id)
 
-        elif(admin is not None):
+        elif (admin is not None):
             user_obj = user_controller.extract_user(is_admin=admin)
 
         # Verify if it is a valid object
@@ -134,9 +138,9 @@ def get_user():
         else:
 
             raise Exception("Unable to get user.")
-        
+
         user = user_obj[0]
-        
+
         # If only one user expected
         if user_id or email:
             user = user_obj[0]
@@ -144,7 +148,8 @@ def get_user():
 
         # If multiple users expected
         elif admin is not None:
-            result = jsonify({"users": [u.model_dump(mode='json') for u in user_obj]}), 200 
+            result = jsonify(
+                {"users": [u.model_dump(mode='json') for u in user_obj]}), 200
 
     except Exception as e:
 
@@ -154,13 +159,67 @@ def get_user():
 
         return result
 
+
+@app.route("/api/UpdateUserById", methods=["GET"])
+def update_user_by_id():
+    result = None
+
+    try:
+        data = request.get_json()
+
+        # Access user_id and reason from JSON body
+        user_id = data.get("user_id")
+        reason = data.get("reason")
+        blacklist = data.get("blacklist")
+        # Check if valid integer
+        if isinstance(user_id, int):
+
+            pass
+
+        elif isinstance(blacklist, bool):
+            pass
+        
+        elif isinstance(reason, str):
+            pass
+
+        else:
+
+            raise Exception("Invalid user id was given.")
+
+        user_obj = user_controller.update_blacklist_user(
+            user_id=user_id, is_blacklist=blacklist, blacklist_reason=reason)
+
+        # Verify if it is a valid object
+        if isinstance(user_obj, list):
+
+            pass
+        
+        else:
+
+            raise Exception("Unable to get user.")
+
+        user = user_obj[0]
+
+        # If only one user expected
+        if user_id:
+            result = jsonify({"user": user.model_dump(mode='json')}), 200
+
+    except Exception as e:
+
+        result = jsonify({"error": str(e)}), 400
+
+    finally:
+
+        return result
+
+
 @app.route("/api/getPreferences", methods=["GET"])
 def get_preferences():
 
     result = None
 
-    try: 
-    
+    try:
+
         user_id = request.args.get('user_id', type=int)
 
         # Check if valid integer
@@ -171,7 +230,7 @@ def get_preferences():
         else:
 
             raise Exception("Invalid user id was given.")
-        
+
         user_obj = user_controller.extract_user(user_id=user_id)
 
         # Verify if it is a valid object
@@ -182,9 +241,9 @@ def get_preferences():
         else:
 
             raise Exception("Unable to get preferences.")
-        
+
         user = user_obj[0]
-        
+
         user_preferences = user.preferences
 
         result = jsonify({"preferences": user_preferences}), 200
@@ -215,11 +274,11 @@ def get_preferences():
 
 @app.route("/api/UpdatePreferences", methods=["POST"])
 def update_preferences(preferences):
-    
+
     result = None
 
-    try: 
-    
+    try:
+
         user_id = request.args.get('user_id', type=int)
 
         # Check if valid integer
@@ -230,7 +289,7 @@ def update_preferences(preferences):
         else:
 
             raise Exception("Invalid user id was given.")
-        
+
         user_obj = user_controller.extract_user(user_id=user_id)
 
         # Check if it is a valid object
@@ -241,9 +300,9 @@ def update_preferences(preferences):
         else:
 
             raise Exception("Unable to find user.")
-        
+
         user = user_obj[0]
-        
+
         user.preferences = preferences
 
         updated_user_obj = user_controller.update_user(user_obj)
@@ -256,9 +315,9 @@ def update_preferences(preferences):
         else:
 
             raise Exception("Unable to update preferences.")
-        
+
         updated_user = updated_user_obj
-        
+
         user_preferences = updated_user.preferences
 
         result = jsonify({"preferences": user_preferences}), 200
@@ -270,6 +329,7 @@ def update_preferences(preferences):
     finally:
 
         return result
+
 
 @app.route("/api/getServiceProviders", methods=["GET"])
 def get_services():
@@ -288,13 +348,14 @@ def get_services():
         else:
 
             raise Exception("Unable to get services.")
-        
+
         response_body = []
 
         # Get all services under user_id
         for user in cleaner_list:
 
-            service_list = sevice_controller.extract_service(user_id=user.user_id)
+            service_list = sevice_controller.extract_service(
+                user_id=user.user_id)
 
             if isinstance(service_list, list):
 
@@ -302,8 +363,9 @@ def get_services():
 
             else:
 
-                raise Exception(f"Unable to get services for cleaner {user.username}.")
-            
+                raise Exception(
+                    f"Unable to get services for cleaner {user.username}.")
+
             # sorted_service_list = sevice_controller.sort_service(list_of_service=service_list)
 
             # if isinstance(sorted_service_list, list):
@@ -313,7 +375,7 @@ def get_services():
             # else:
 
             #     raise Exception("Unable to sort services by default type.")
-            
+
             # temp_service_list = [service.model_dump(mode='json') for service in sorted_service_list]
 
             # response_body.append({
@@ -324,7 +386,6 @@ def get_services():
                 "cleaner": user.model_dump(mode="json"),
                 "service_list": service_list
             })
-
 
         result = jsonify({"serviceProviders": response_body}), 200
 
@@ -552,11 +613,13 @@ def get_serviceById():
         else:
 
             raise Exception("Invalid by_user_id was given.")
-        
-        if  isinstance(cleaner_id,int) and service_id is None:      
-            service_list = sevice_controller.extract_service(user_id=cleaner_id)
-        elif isinstance(service_id,int) and cleaner_id is None:
-            service_list = sevice_controller.extract_service(service_id=service_id)
+
+        if isinstance(cleaner_id, int) and service_id is None:
+            service_list = sevice_controller.extract_service(
+                user_id=cleaner_id)
+        elif isinstance(service_id, int) and cleaner_id is None:
+            service_list = sevice_controller.extract_service(
+                service_id=service_id)
 
         if isinstance(service_list, list):
 
@@ -565,7 +628,7 @@ def get_serviceById():
         else:
 
             raise Exception("Unable to get services.")
-        
+
         # sorted_service_list = sevice_controller.sort_service(list_of_service=service_list)
 
         # if isinstance(sorted_service_list, list):
@@ -575,7 +638,7 @@ def get_serviceById():
         # else:
 
         #     raise Exception("Unable to sort services by default type.")
-        
+
         # temp_service_list = [service.model_dump(mode='json') for service in sorted_service_list]
 
         # result = jsonify({"services": temp_service_list}), 200
@@ -640,13 +703,14 @@ def get_serviceById():
     #     return jsonify({"error": "Service not found"}), 404
     # return jsonify({"services": services})
 
+
 @app.route("/api/getAllReviewsById", methods=["GET"])
 def get_reviews():
 
     result = None
 
     try:
-        
+
         # some logic to get reviews tagged to specific services
         service_id = request.args.get('service_id', type=int)
 
@@ -657,7 +721,7 @@ def get_reviews():
         else:
 
             raise Exception("Invalid value for service id.")
-        
+
         review_list = review_controller.extract_review(service_id=service_id)
 
         if isinstance(review_list, list):
@@ -667,10 +731,11 @@ def get_reviews():
         else:
 
             raise Exception("Unable to find review for service.")
-        
+
         for review in review_list:
 
-            temp_review_list = [review.model_dump(mode='json') for review in review_list]
+            temp_review_list = [review.model_dump(
+                mode='json') for review in review_list]
 
         result = jsonify({"reviews": temp_review_list}), 200
 
@@ -681,7 +746,7 @@ def get_reviews():
     finally:
 
         return result
-    
+
     # reviews = [
     #     {
     #         "id": 1,
