@@ -162,55 +162,35 @@ def get_user():
 
 @app.route("/api/UpdateUserById", methods=["PUT"])
 def update_user_by_id():
-    result = None
-
     try:
         data = request.get_json()
 
-        # Access user_id and reason from JSON body
         user_id = data.get("user_id")
         reason = data.get("reason")
-        blacklist = data.get("blacklist")
-        # Check if valid integer
-        if isinstance(user_id, int):
+        is_blacklist = data.get("is_blacklist")
 
-            pass
+        if not isinstance(user_id, int) or user_id <= 0:
+            raise Exception("Invalid or missing user_id.")
+        if not isinstance(is_blacklist, bool):
+            raise Exception("Invalid or missing is_blacklist flag.")
+        if reason is not None and not isinstance(reason, str):
+            raise Exception("Invalid reason.")
 
-        elif isinstance(blacklist, bool):
-            pass
-        
-        elif isinstance(reason, str):
-            pass
+        # Call your update method
+        update_result = user_controller.update_blacklist_user(
+            user_id=user_id,
+            is_blacklist=is_blacklist,
+            blacklist_reason=reason
+        )
 
-        else:
+        if isinstance(update_result, Exception):
+            raise update_result
 
-            raise Exception("Invalid user id was given.")
-
-        user_obj = user_controller.update_blacklist_user(
-            user_id=user_id, is_blacklist=blacklist, blacklist_reason=reason)
-
-        # Verify if it is a valid object
-        if isinstance(user_obj, list):
-
-            pass
-        
-        else:
-
-            raise Exception("Unable to get user.")
-
-        user = user_obj[0]
-
-        # If only one user expected
-        if user_id:
-            result = jsonify({"user": user.model_dump(mode='json')}), 200
+        # Return success JSON response
+        return jsonify({"message": "User blacklist updated successfully."}), 200
 
     except Exception as e:
-
-        result = jsonify({"error": str(e)}), 400
-
-    finally:
-
-        return result
+        return jsonify({"error": str(e)}), 400
 
 
 @app.route("/api/getPreferences", methods=["GET"])
