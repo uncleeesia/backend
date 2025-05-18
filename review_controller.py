@@ -29,17 +29,20 @@ class ReviewController():
                 para = (user_id,)
 
             elif isinstance(service_id, (list, tuple)):
-                placeholders = ', '.join(['%s'] * len(service_id))
+                placeholders = sql.SQL(', ').join(sql.Placeholder() * len(service_id))
                 sql_command = sql.SQL(
-                    f"SELECT username, review_id, review_score, review_text, by_user_id, service_id "
-                    f"FROM {{}}.review r inner join {{}}.general_user u on u.user_id = r.by_user_id "
-                    f"WHERE service_id IN ({placeholders})"
-                ).format(sql.Identifier(self.schema),sql.Identifier(self.schema))
+                    "SELECT username, review_id, review_score, review_text, by_user_id, service_id "
+                    "FROM {}.review r INNER JOIN {}.general_user u ON u.user_id = r.by_user_id "
+                    "WHERE service_id IN ({})"
+                ).format(sql.Identifier(self.schema), sql.Identifier(self.schema), placeholders)
                 para = tuple(service_id)
+
             elif isinstance(service_id, int):
                 sql_command = sql.SQL(
-                "SELECT username, review_id, review_score, review_text, by_user_id, service_id "
-                "FROM {}.review r inner join {}.general_user u on u.user_id = r.by_user_id WHERE service_id = %s").format(sql.Identifier(self.schema))
+                    "SELECT username, review_id, review_score, review_text, by_user_id, service_id "
+                    "FROM {}.review r INNER JOIN {}.general_user u ON u.user_id = r.by_user_id "
+                    "WHERE service_id = %s"
+                ).format(sql.Identifier(self.schema), sql.Identifier(self.schema))
                 para = (service_id,)
 
             else:
