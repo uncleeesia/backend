@@ -32,7 +32,8 @@ class ReviewController():
                 placeholders = ', '.join(['%s'] * len(service_id))
                 sql_command = sql.SQL(
                     f"SELECT username, review_id, review_score, review_text, by_user_id, service_id "
-                    f"FROM {{}}.review r inner join {{}}.general_user u on u.user_id = r.by_user_id WHERE service_id IN ({placeholders})"
+                    f"FROM {{}}.review r inner join {{}}.general_user u on u.user_id = r.by_user_id "
+                    f"WHERE service_id IN ({placeholders})"
                 ).format(sql.Identifier(self.schema),sql.Identifier(self.schema))
                 para = tuple(service_id)
             elif isinstance(service_id, int):
@@ -55,7 +56,7 @@ class ReviewController():
 
                 data = dict(zip(cols, callToDB_result))
                 
-                review_list.append(Review.model_validate(data))
+                review_list.append(data)
 
             elif isinstance(callToDB_result, list) and callToDB_result:
 
@@ -65,7 +66,7 @@ class ReviewController():
 
                     data = dict(zip(cols, s))
                     
-                    review_list.append(Review.model_validate(data))
+                    review_list.append(data)
 
             elif isinstance(callToDB_result, str) and callToDB_result == "":
 
