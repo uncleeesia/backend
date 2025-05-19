@@ -120,7 +120,7 @@ class UserController:
 
                 data = dict(zip(cols, callToDB_result))
 
-                user_list.append(data)
+                user_list.append(General_user.model_validate(data))
 
             elif isinstance(callToDB_result, str) and callToDB_result == "":
 
@@ -139,7 +139,7 @@ class UserController:
 
                     data = dict(zip(cols, u))
 
-                    user_list.append(data)
+                    user_list.append(General_user.model_validate(data))
 
             elif isinstance(callToDB_result, Exception):
 

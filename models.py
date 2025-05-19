@@ -2,7 +2,7 @@ import re
 import json
 
 from decimal import Decimal
-from typing import Any
+from typing import Optional, Any
 from datetime import datetime
 from pydantic import BaseModel, Field, field_validator
 
@@ -19,7 +19,7 @@ class General_user(BaseModel):
     service_id_list: list[int] | None
     profile_description: str | None
     picture_url: str
-    preferences: dict[str, Any] = Field(default_factory=dict)
+    preferences: Optional[dict[str, Any]] = None 
     is_blacklist: bool = False
     blacklist_reason: str | None
     @field_validator('email')
