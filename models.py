@@ -75,7 +75,7 @@ class Feedback(BaseModel):
 
     feedback_id: int
     username: str | None
-    phone_number: str = Field(min_length=10, max_length=10) | None
+    phone_number: str | None
     feedback_text: str
 
     @field_validator('phone_number')
