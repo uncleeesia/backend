@@ -12,46 +12,31 @@ class FeedbackController:
         self.schema = str.strip(Schema_Name)
 
     def create_feedback(self, feedback_detail: dict) -> Feedback | Exception:
-        """"""
-
         result = None
-
         try:
-
-            if feedback_detail:
-
-                pass
-
-            else: 
-
-                raise Exception("Invalid or Missing Arguement.")
+            if not feedback_detail:
+                raise Exception("Invalid or Missing Argument.")
             
-            # Insert fake feedback id into feedback_detail
             pending_feedback = Feedback.model_validate(feedback_detail)
-            
-            sql_command = sql.SQL("""INSERT INTO {}.feedback (username, phone_number, feedback_text) VALUES (%(username)s. %(phone_number)s, %(feedback_text)s) RETURNING feedback_id""").format(sql.Identifier(self.schema))
-            para = pending_feedback.model_dump()
 
+            sql_command = sql.SQL("""
+                INSERT INTO {}.feedback (username, phone_number, feedback_text)
+                VALUES (%(username)s, %(phone_number)s, %(feedback_text)s)
+                RETURNING feedback_id
+            """).format(sql.Identifier(self.schema))
+            
+            para = pending_feedback.model_dump()
             callToDB_result = self.dbt.callToDB(sql_command, para)
 
             if isinstance(callToDB_result, tuple):
-
-                pass
-
+                result = True
             elif isinstance(callToDB_result, Exception):
-
                 raise callToDB_result
-            
             else:
-
                 raise Exception("Unable to create feedback.")
-            
-            result = True
 
         except Exception as e:
-
             result = e
 
         finally:
-
             return result
