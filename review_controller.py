@@ -12,95 +12,74 @@ class ReviewController():
         self.dbt = DBTalker_Obj
         self.schema = str.strip(Schema_Name)
 
-    def extract_review(self, review_id: int | None = None, user_id: int | None = None, service_id: int | None = None) -> list[Review] | Exception:
-        """"""
+def extract_review(self, review_id: int | None = None, user_id: int | None = None, service_id: int | None = None) -> list[Review] | list[ReviewReport] | Exception:
+    result = None
 
-        result = None
+    try:
+        if review_id:
+            sql_command = sql.SQL(
+                "SELECT username, review_id, review_score, review_text, by_user_id, service_id "
+                "FROM {}.review r INNER JOIN {}.general_user u ON u.user_id = r.by_user_id "
+                "WHERE r.review_id = %s"
+            ).format(sql.Identifier(self.schema), sql.Identifier(self.schema))
+            para = (review_id,)
 
-        try:
+        elif user_id:
+            sql_command = sql.SQL(
+                "SELECT r.review_id, r.review_score, r.service_id "
+                "FROM {}.review r INNER JOIN {}.service s ON s.service_id = r.service_id "
+                "WHERE s.by_user_id = %s"
+            ).format(sql.Identifier(self.schema), sql.Identifier(self.schema))
+            para = (user_id,)
 
-            if review_id:
+        elif isinstance(service_id, (list, tuple)):
+            placeholders = sql.SQL(', ').join(sql.Placeholder() * len(service_id))
+            sql_command = sql.SQL(
+                "SELECT username, review_id, review_score, review_text, by_user_id, service_id "
+                "FROM {}.review r INNER JOIN {}.general_user u ON u.user_id = r.by_user_id "
+                "WHERE service_id IN ({})"
+            ).format(sql.Identifier(self.schema), sql.Identifier(self.schema), placeholders)
+            para = tuple(service_id)
 
-                sql_command = sql.SQL("SELECT review_id, review_score, review_text, by_user_id, service_id FROM {}.review WHERE review_id = %s").format(
-                    sql.Identifier(self.schema))
-                para = (review_id,)
+        elif isinstance(service_id, int):
+            sql_command = sql.SQL(
+                "SELECT username, review_id, review_score, review_text, by_user_id, service_id "
+                "FROM {}.review r INNER JOIN {}.general_user u ON u.user_id = r.by_user_id "
+                "WHERE service_id = %s"
+            ).format(sql.Identifier(self.schema), sql.Identifier(self.schema))
+            para = (service_id,)
 
-            elif user_id:
+        else:
+            raise Exception("Invalid or missing arguments.")
 
-                sql_command = sql.SQL("SELECT r.review_id, r.review_score, r.service_id FROM {}.review r INNER JOIN {}.service s ON s.service_id = r.service_id WHERE s.by_user_id = %s").format(
-                    sql.Identifier(self.schema), sql.Identifier(self.schema))
-                para = (user_id,)
+        callToDB_result = self.dbt.callToDB(sql_command, para)
 
-            elif isinstance(service_id, (list, tuple)):
-                placeholders = sql.SQL(', ').join(
-                    sql.Placeholder() * len(service_id))
-                sql_command = sql.SQL(
-                    "SELECT username, review_id, review_score, review_text, by_user_id, service_id "
-                    "FROM {}.review r INNER JOIN {}.general_user u ON u.user_id = r.by_user_id "
-                    "WHERE service_id IN ({})"
-                ).format(sql.Identifier(self.schema), sql.Identifier(self.schema), placeholders)
-                para = tuple(service_id)
+        if not callToDB_result:
+            raise Exception("Unable to find review.")
+        if isinstance(callToDB_result, Exception):
+            raise callToDB_result
 
-            elif isinstance(service_id, int):
-                sql_command = sql.SQL(
-                    "SELECT username, review_id, review_score, review_text, by_user_id, service_id "
-                    "FROM {}.review r INNER JOIN {}.general_user u ON u.user_id = r.by_user_id "
-                    "WHERE service_id = %s"
-                ).format(sql.Identifier(self.schema), sql.Identifier(self.schema))
-                para = (service_id,)
+        review_list = []
 
-            else:
-
-                raise Exception("Invalid or missing arguements.")
-
-            callToDB_result = self.dbt.callToDB(sql_command, para)
-            review_list = []
-
-            # Database result processing
-            if isinstance(callToDB_result, list) and user_id:
-                cols = ("review_id", "review_score", "service_id")
-
-                data = dict(zip(cols, callToDB_result))
-
+        if user_id:
+            cols = ("review_id", "review_score", "service_id")
+            for row in callToDB_result:
+                data = dict(zip(cols, row))
                 review_list.append(ReviewReport.model_validate(data))
-
-            elif isinstance(callToDB_result, tuple) and callToDB_result and user_id is None:
-
-                cols = ("username", "review_id", "review_score",
-                        "review_text", "by_user_id", "service_id")
-
-                data = dict(zip(cols, callToDB_result))
-
+        else:
+            cols = ("username", "review_id", "review_score", "review_text", "by_user_id", "service_id")
+            for row in callToDB_result:
+                data = dict(zip(cols, row))
                 review_list.append(Review.model_validate(data))
 
-            elif isinstance(callToDB_result, list) and callToDB_result and user_id is None:
+        result = review_list
 
-                for s in callToDB_result:
+    except Exception as e:
+        result = e
 
-                    cols = ("username", "review_id", "review_score",
-                            "review_text", "by_user_id", "service_id")
+    finally:
+        return result
 
-                    data = dict(zip(cols, s))
-
-                    review_list.append(Review.model_validate(data))
-
-            elif isinstance(callToDB_result, str) and callToDB_result == "":
-
-                raise Exception("Unable to find review.")
-
-            elif isinstance(callToDB_result, Exception):
-
-                raise callToDB_result
-
-            result = review_list
-
-        except Exception as e:
-
-            result = e
-
-        finally:
-
-            return result
 
     def create_review(self, review_details: dict) -> Review | Exception:
         """"""
