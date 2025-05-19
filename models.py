@@ -78,6 +78,12 @@ class Feedback(BaseModel):
     phone_number: str | None
     feedback_text: str
 
+class CreateFeedback(BaseModel):
+
+    username: str | None
+    phone_number: str | None
+    feedback_text: str
+
 class Payment(BaseModel):
 
     payment_id: int
