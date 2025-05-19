@@ -28,7 +28,7 @@ class PaymentController():
                 )
             """).format(sql.Identifier(self.schema))
 
-            para = validated_input.model_dump()
+            para = payment_details.model_dump()
             result = self.dbt.callToDB(sql_command, para)
 
             if isinstance(result, Exception):
