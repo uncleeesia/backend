@@ -72,8 +72,8 @@ def post_payment():
                 "from_user_id": data.get("user_id", 123),     
                 "to_user_id": data.get("provider_id", 456),  
                 "price": service["price"],
-                "payment_timestamp": datetime,
-                "booking_timestamp": datetime,
+                "payment_timestamp": booking_date,
+                "booking_timestamp": booking_date,
             }
 
             result = payment_controller.create_payment(payment_data)
