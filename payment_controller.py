@@ -200,39 +200,39 @@ class PaymentController():
 
             return result
 
-def extract_payment_method(self):
-    """
-    Extract all payment methods from the database
-    """
-    result = None
+    def extract_payment_method(self):
+        """
+        Extract all payment methods from the database
+        """
+        result = None
 
-    try:
-        sql_command = sql.SQL(
-            "SELECT payment_method_id, payment_method_name, payment_method_icon FROM {}.paymentMethod"
-        ).format(sql.Identifier(self.schema))
+        try:
+            sql_command = sql.SQL(
+                "SELECT payment_method_id, payment_method_name, payment_method_icon FROM {}.paymentMethod"
+            ).format(sql.Identifier(self.schema))
 
-        callToDB_result = self.dbt.callToDB(sql_command, tuple())
+            callToDB_result = self.dbt.callToDB(sql_command, tuple())
 
-        if isinstance(callToDB_result, list):
-            # Map each row to PaymentMethod model
-            result = [
-                PaymentMethod.model_validate(dict(zip(
-                    ("payment_method_id", "payment_method_name", "payment_method_icon"),
-                    row)))
-                for row in callToDB_result
-            ]
+            if isinstance(callToDB_result, list):
+                # Map each row to PaymentMethod model
+                result = [
+                    PaymentMethod.model_validate(dict(zip(
+                        ("payment_method_id", "payment_method_name", "payment_method_icon"),
+                        row)))
+                    for row in callToDB_result
+                ]
 
-        elif isinstance(callToDB_result, Exception):
-            raise callToDB_result
+            elif isinstance(callToDB_result, Exception):
+                raise callToDB_result
 
-        elif isinstance(callToDB_result, str) and callToDB_result == "":
-            raise Exception("Unable to find payment methods.")
+            elif isinstance(callToDB_result, str) and callToDB_result == "":
+                raise Exception("Unable to find payment methods.")
 
-        else:
-            raise Exception("Unexpected response from database.")
+            else:
+                raise Exception("Unexpected response from database.")
 
-    except Exception as e:
-        result = e
+        except Exception as e:
+            result = e
 
-    finally:
-        return result
+        finally:
+            return result
