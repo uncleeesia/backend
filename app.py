@@ -1,4 +1,5 @@
 # Middle layer imports
+from datetime import datetime
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
@@ -49,11 +50,43 @@ def post_feedback():
     # logic to update db
     return jsonify({"message": "Feedback received", "data": data}), 200
 
-# @app.route("/api/postPayment", methods=["POST"])
-# def post_payment():
-#     data = request.get_json()
-#     # logic to update db
-#     return jsonify({"message": "Payment received", "data": data}), 200
+@app.route("/api/postPayment", methods=["POST"])
+def post_payment():
+    data = request.get_json()
+    if not data or "bookingDetails" not in data:
+        return jsonify({"error": "Invalid or missing data"}), 400
+
+    booking = data["bookingDetails"]
+    services = booking.get("services", [])
+    booking_date = booking.get("bookingDate")
+
+    if not services or not booking_date:
+        return jsonify({"error": "Missing booking services or date"}), 400
+
+    try:
+        created_payments = []
+
+        for service in services:
+            payment_data = {
+                "service_id": service.get("service_id", 1),  
+                "from_user_id": data.get("user_id", 123),     
+                "to_user_id": data.get("provider_id", 456),  
+                "price": service["price"],
+                "payment_timestamp": datetime.utcnow(),
+                "booking_timestamp": datetime.fromisoformat(booking_date.replace("Z", "+00:00")),
+            }
+
+            result = payment_controller.create_payment(payment_data)
+
+            if isinstance(result, Exception):
+                return jsonify({"error": str(result)}), 400
+
+            created_payments.append(result.model_dump(mode="json"))
+
+        return jsonify({"message": "Payment received", "data": created_payments}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/api/getPaymentMethods", methods=["GET"])
 def get_payment_methods():
