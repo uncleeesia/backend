@@ -686,46 +686,31 @@ def get_serviceById():
 
 @app.route("/api/getAllReviewsById", methods=["GET"])
 def get_reviews():
-
     result = None
 
     try:
-
-        # some logic to get reviews tagged to specific services
         service_id = request.args.get('service_id', type=int)
 
-        if isinstance(service_id, int):
-
-            pass
-
-        else:
-
+        if not isinstance(service_id, int):
             raise Exception("Invalid value for service id.")
 
         review_list = review_controller.extract_review(service_id=service_id)
 
-        if isinstance(review_list, list):
-
-            pass
-
-        else:
-
+        if not isinstance(review_list, list):
             raise Exception("Unable to find review for service.")
 
-        for review in review_list:
-
-            temp_review_list = [review.model_dump(
-                mode='json') for review in review_list]
-
-        result = jsonify({"reviews": temp_review_list}), 200
+        if len(review_list) == 0:
+            result = jsonify({"message": "No reviews found."}), 200
+        else:
+            temp_review_list = [review.model_dump(mode='json') for review in review_list]
+            result = jsonify({"reviews": temp_review_list}), 200
 
     except Exception as e:
-
         result = jsonify({"error": str(e)}), 400
 
     finally:
-
         return result
+
 
     # reviews = [
     #     {
