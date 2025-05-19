@@ -47,23 +47,21 @@ def list_routes():
 
 @app.route("/api/postFeedback", methods=["POST"])
 def post_feedback():
-    data = request.get_json()
-    if not data or "feedback" not in data:
+    feedback = request.get_json()
+    if not feedback or "feedback" not in feedback:
         return "", 400
-    feedback = data["feedback"]
-    if not feedback:
-        return "", 400
+
     feedback_data = {
-        "username": feedback.get("username",None),
-        "phone_number": feedback.get("phone_number",None),
+        "username": feedback.get("username", None),
+        "phone_number": feedback.get("phone_number", None),
         "feedback_text": feedback.get("feedback"),
     }
+
     result = feedback_controller.create_feedback(feedback_data)
     if isinstance(result, Exception):
         print(result)
         return "", 500
     return "", 200
-
 
 @app.route("/api/postPayment", methods=["POST"])
 def post_payment():
