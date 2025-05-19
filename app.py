@@ -74,7 +74,7 @@ def post_payment():
                 "service_id": service.get("id"),
                 "from_user_id": from_user_id,
                 "to_user_id": to_user_id,
-                "price": service["price"],
+                "price": service.get("price"),
                 "payment_timestamp": booking_date,
                 "booking_timestamp": booking_date,
             }
