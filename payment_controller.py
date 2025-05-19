@@ -4,6 +4,7 @@ from dbtalker_psql import DBTalker
 from psycopg import sql
 from models import Payment
 from models import PaymentReport
+from models import PaymentMethod
 
 
 class PaymentController():
@@ -190,6 +191,50 @@ class PaymentController():
                 raise Exception("Unable to find payment.")
 
             result = payment_list
+
+        except Exception as e:
+
+            result = e
+
+        finally:
+
+            return result
+
+    def extract_payment_method(self, data):
+        """
+        Extract payment method from the data
+        """
+
+        result = None
+
+        try:
+
+            if data:
+
+                sql_command = sql.SQL("""SELECT payment_method_id, payment_method_name, payment_method_icon FROM {}.PaymentMethod""").format(
+                    sql.Identifier(self.schema))
+
+                callToDB_result = self.dbt.callToDB(sql_command, tuple())
+
+                if isinstance(callToDB_result, tuple):
+
+                    cols = ("payment_method",)
+
+                    data = dict(zip(cols, callToDB_result))
+
+                    result = PaymentMethod.model_validate(data)
+
+                elif isinstance(callToDB_result, Exception):
+
+                    raise callToDB_result
+
+                elif isinstance(callToDB_result, str) and callToDB_result == "":
+
+                    raise Exception("Unable to find payment.")
+
+            else:
+
+                raise Exception("Invalid or missing arguements.")
 
         except Exception as e:
 

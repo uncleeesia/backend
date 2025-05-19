@@ -119,6 +119,10 @@ class Payment(BaseModel):
 
         return v
 
+class PaymentMethod(BaseModel):
+    payment_method_id: int
+    payment_method_name: str
+    payment_method_icon: str
 
 class PaymentReport(BaseModel):
     user_from_username: str
