@@ -67,7 +67,7 @@ def get_payment_methods():
         if isinstance(payment_method_list, list):
 
             pass
-
+        
         else:
 
             raise Exception("Unable to get payment method.")

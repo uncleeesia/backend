@@ -216,7 +216,7 @@ class PaymentController():
 
                 callToDB_result = self.dbt.callToDB(sql_command, tuple())
 
-                if isinstance(callToDB_result, tuple):
+                if isinstance(callToDB_result, list):
 
                     cols = ("payment_method_id", "payment_method_name", "payment_method_icon")
 
