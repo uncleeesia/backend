@@ -211,7 +211,7 @@ class PaymentController():
 
             if data:
 
-                sql_command = sql.SQL("""SELECT payment_method_id, payment_method_name, payment_method_icon FROM {}.PaymentMethod""").format(
+                sql_command = sql.SQL("""SELECT payment_method_id, payment_method_name, payment_method_icon FROM {}.paymentMethod""").format(
                     sql.Identifier(self.schema))
 
                 callToDB_result = self.dbt.callToDB(sql_command, tuple())
