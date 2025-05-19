@@ -16,8 +16,9 @@ class PaymentController():
 
     def create_payment(self, payment_details: dict) -> bool | Exception:
         try:
-            # Validate input using InputPayment model
-            validated_input = InputPayment.model_validate(payment_details)
+            print("Incoming payment_details:", payment_details)
+
+            print("Validated input:", payment_details)
 
             sql_command = sql.SQL("""
                 INSERT INTO {}.payment (
@@ -35,8 +36,8 @@ class PaymentController():
             return True
 
         except Exception as e:
+            print("Create Payment Error:", e)
             return e
-
 
     def extract_payment_for_report(self, user_id: int | None = None) -> list[PaymentReport] | Exception:
         """"""
@@ -189,7 +190,8 @@ class PaymentController():
                 # Map each row to PaymentMethod model
                 result = [
                     PaymentMethod.model_validate(dict(zip(
-                        ("payment_method_id", "payment_method_name", "payment_method_icon"),
+                        ("payment_method_id", "payment_method_name",
+                         "payment_method_icon"),
                         row)))
                     for row in callToDB_result
                 ]
