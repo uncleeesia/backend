@@ -57,33 +57,14 @@ def post_feedback():
 
 @app.route("/api/getPaymentMethods", methods=["GET"])
 def get_payment_methods():
-    result = None
-
     try:
-
         payment_method_list = payment_controller.extract_payment_method()
-
-        # Verify if it is a valid object
-        if isinstance(payment_method_list, list):
-
-            pass
-        
-        else:
-
+        if not isinstance(payment_method_list, list):
             raise Exception("Unable to get payment method.")
-
-        temp_payment_method_list = [payment.model_dump(
-            mode='json') for payment in payment_method_list]
-
-        result = jsonify({"paymentMethod": temp_payment_method_list}), 200
-
+        temp_payment_method_list = [p.model_dump(mode='json') for p in payment_method_list]
+        return jsonify({"paymentMethod": temp_payment_method_list}), 200
     except Exception as e:
-
-        result = jsonify({"error": str(e)}), 400
-
-    finally:
-
-        return result
+        return jsonify({"error": str(e)}), 400
 
 @app.route("/api/getAllPaymentTransactionByUserId", methods=["GET"])
 def get_all_payment_transaction_by_user_id():
