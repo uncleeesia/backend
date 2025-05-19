@@ -53,24 +53,27 @@ def post_feedback():
 @app.route("/api/postPayment", methods=["POST"])
 def post_payment():
     data = request.get_json()
+    
     if not data or "bookingDetails" not in data:
         return jsonify({"error": "Invalid or missing data"}), 400
 
     booking = data["bookingDetails"]
     services = booking.get("services", [])
     booking_date = booking.get("bookingDate")
+    from_user_id = data.get("by_user_id")
+    to_user_id = data.get("to_user_id")
 
-    if not services or not booking_date:
-        return jsonify({"error": "Missing booking services or date"}), 400
+    if not services or not booking_date or from_user_id is None or to_user_id is None:
+        return jsonify({"error": "Missing booking info"}), 400
 
     try:
         created_payments = []
 
         for service in services:
             payment_data = {
-                "service_id": service.get("service_id", 1),  
-                "from_user_id": data.get("user_id", 123),     
-                "to_user_id": data.get("provider_id", 456),  
+                "service_id": service.get("id"),
+                "from_user_id": from_user_id,
+                "to_user_id": to_user_id,
                 "price": service["price"],
                 "payment_timestamp": booking_date,
                 "booking_timestamp": booking_date,
