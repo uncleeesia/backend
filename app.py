@@ -247,61 +247,25 @@ def update_user_by_id():
 
 @app.route("/api/getPreferences", methods=["GET"])
 def get_preferences():
-
-    result = None
-
     try:
-
         user_id = request.args.get('user_id', type=int)
 
-        # Check if valid integer
-        if isinstance(user_id, int):
-
-            pass
-
-        else:
-
+        if not isinstance(user_id, int):
             raise Exception("Invalid user id was given.")
 
         user_obj = user_controller.extract_user(user_id=user_id)
 
-        # Verify if it is a valid object
-        if isinstance(user_obj, list):
-
-            pass
-
-        else:
-
-            raise Exception("Unable to get preferences.")
+        if not isinstance(user_obj, list) or not user_obj:
+            raise Exception("User not found.")
 
         user = user_obj[0]
-
         user_preferences = user.preferences
 
-        result = jsonify({"preferences": user_preferences}), 200
+        # Even if preferences is None or empty, return 200 with an empty list
+        return jsonify({"preferences": user_preferences or []}), 200
 
     except Exception as e:
-
-        result = jsonify({"error": str(e)}), 400
-
-    finally:
-
-        return result
-
-    # preferences = {
-    #     "id": 1,
-    #     "theme": "light",
-    #     "House Cleaning": False,
-    #     "Car Cleaning": False,
-    #     "Bathroom Cleaning": True,
-    #     "Window Cleaning": False,
-    #     "Indonesian": True,
-    #     "Filipino": False,
-    #     "Burmese": False,
-    #     "Vietnamese": False,
-    # }
-    # preferences = {}
-    # return jsonify({"preferences": preferences}), 200
+        return jsonify({"error": str(e)}), 400
 
 
 @app.route("/api/UpdatePreferences", methods=["POST"])
