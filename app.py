@@ -259,10 +259,11 @@ def get_preferences():
             raise Exception("User not found.")
 
         user = user_obj[0]
-        user_preferences = user.preferences
 
-        # Even if preferences is None or empty, return 200 with an empty list
-        return jsonify({"preferences": user_preferences or []}), 200
+        # Safely default to an empty dict if preferences is None
+        user_preferences = user.preferences if user.preferences is not None else {}
+
+        return jsonify({"preferences": user_preferences}), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
