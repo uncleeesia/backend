@@ -700,11 +700,15 @@ def get_reviews():
 
     try:
         service_id = request.args.get('service_id', type=int)
+        user_id = request.args.get('user_id', type=int)
 
-        if not isinstance(service_id, int):
-            raise Exception("Invalid value for service id.")
-
-        review_list = review_controller.extract_review(service_id=service_id)
+        if isinstance(service_id, int):
+            pass
+        elif isinstance(user_id, int):
+            pass
+        else:
+            raise Exception("Invalid value for user id.")
+        review_list = review_controller.extract_review(service_id=service_id,user_id=user_id)
 
         if not isinstance(review_list, list):
             raise Exception("Unable to find review for service.")

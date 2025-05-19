@@ -75,14 +75,12 @@ class PaymentController():
 
                 sql_command = sql.SQL("""SELECT     user_from.username, user_from.user_id, user_to.username, user_to.user_id,
 		                                            s.service_id, s.service_tags, 
-                                                    p.price, p.payment_timestamp, p.booking_timestamp,
-                                                    r.review_score, r.by_user_id
+                                                    p.price, p.payment_timestamp, p.booking_timestamp
                                         FROM {}.payment p 
                                         INNER JOIN {}.service AS s ON s.service_id = p.service_id
                                         INNER JOIN {}.general_user AS user_from ON p.from_user_id = user_from.user_id
                                         INNER JOIN {}.general_user AS user_to ON p.to_user_id = user_to.user_id
-                                        LEFT JOIN {}.review AS r ON r.service_id = s.service_id 
-                                        WHERE p.to_user_id = %s""").format(sql.Identifier(self.schema), sql.Identifier(self.schema), sql.Identifier(self.schema), sql.Identifier(self.schema), sql.Identifier(self.schema))
+                                        WHERE p.to_user_id = %s""").format(sql.Identifier(self.schema), sql.Identifier(self.schema), sql.Identifier(self.schema), sql.Identifier(self.schema))
                 para = (user_id,)
 
             else:
@@ -95,7 +93,7 @@ class PaymentController():
             if isinstance(callToDB_result, tuple):
 
                 cols = ("user_from_username", "user_from_user_id", "user_to_username", "user_to_user_id", "service_id", "service_tags",
-                        "price", "payment_timestamp", "booking_timestamp", "review_score", "by_user_id")
+                        "price", "payment_timestamp", "booking_timestamp")
 
                 data = dict(zip(cols, callToDB_result))
 

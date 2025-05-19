@@ -134,8 +134,7 @@ class PaymentReport(BaseModel):
     price: Decimal = Field(decimal_places=2)
     payment_timestamp: datetime
     booking_timestamp: datetime
-    review_score: int
-    by_user_id: int
+
     @field_validator('payment_timestamp')
     def enforce(cls, v: datetime):
 
@@ -161,4 +160,10 @@ class Review(BaseModel):
     review_score: int
     review_text: str
     by_user_id: int
+    service_id: int
+
+class ReviewReport(BaseModel):
+
+    review_id: int
+    review_score: int
     service_id: int
