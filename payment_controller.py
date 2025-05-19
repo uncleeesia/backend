@@ -2,7 +2,7 @@ from logging import Logger
 from datetime import datetime
 from dbtalker_psql import DBTalker
 from psycopg import sql
-from models import Payment
+from models import Payment,InputPayment
 from models import PaymentReport
 from models import PaymentMethod
 
@@ -18,7 +18,9 @@ class PaymentController():
         try:
             print("Incoming payment_details:", payment_details)
 
-            print("Validated input:", payment_details)
+            validated_input = InputPayment(**payment_details)
+
+            print("Validated input:", validated_input)
 
             sql_command = sql.SQL("""
                 INSERT INTO {}.payment (
@@ -28,7 +30,7 @@ class PaymentController():
                 )
             """).format(sql.Identifier(self.schema))
 
-            para = payment_details.model_dump()
+            para = validated_input.model_dump()
             result = self.dbt.callToDB(sql_command, para)
 
             if isinstance(result, Exception):

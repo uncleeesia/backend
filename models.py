@@ -118,7 +118,13 @@ class Payment(BaseModel):
             raise Exception("Invalid input for field 'booking_timestamp'.")
 
         return v
-
+class InputPayment(BaseModel):
+    service_id: int
+    from_user_id: int
+    to_user_id: int
+    price: Decimal
+    payment_timestamp: datetime
+    booking_timestamp: datetime
 class PaymentMethod(BaseModel):
     payment_method_id: int
     payment_method_name: str
