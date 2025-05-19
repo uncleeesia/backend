@@ -78,19 +78,6 @@ class Feedback(BaseModel):
     phone_number: str | None
     feedback_text: str
 
-    @field_validator('phone_number')
-    def enforce_phone_number(cls, v):
-
-        pattern = r"^\+?[1-9]\d{1,14}$"
-        result = bool(re.match(pattern, v))
-
-        if not result:
-
-            raise Exception("Invalid input for field 'phone_number'.")
-
-        return v
-
-
 class Payment(BaseModel):
 
     payment_id: int
