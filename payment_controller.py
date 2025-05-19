@@ -200,7 +200,7 @@ class PaymentController():
 
             return result
 
-    def extract_payment_method(self, data):
+    def extract_payment_method(self):
         """
         Extract payment method from the data
         """
