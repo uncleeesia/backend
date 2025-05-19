@@ -370,3 +370,42 @@ class UserController:
 
         finally:
             return result
+
+    def update_user_preferences(self, user_id: int, preferences: dict) -> General_user | Exception:
+        """"""
+
+        result = None
+
+        try:
+
+            if not (isinstance(user_id, int) and user_id > 0):
+
+                raise Exception("Invalid or missing arguments.")
+
+            sql_command = sql.SQL("""
+                UPDATE {}.general_user 
+                SET preferences = %(preferences)s 
+                WHERE user_id = %(user_id)s
+            """).format(sql.Identifier(self.schema))
+
+            para = {
+                "user_id": user_id,
+                "preferences": preferences
+            }
+
+            rows_affected = self.dbt.callToDB(sql_command, para)
+
+            if rows_affected == 1:
+
+                result = self.extract_user(user_id=user_id)
+
+            else:
+
+                raise Exception("Unable to update user preferences.")
+
+        except Exception as e:
+
+            result = e
+
+        finally:
+            return result

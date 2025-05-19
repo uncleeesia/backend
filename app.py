@@ -302,7 +302,7 @@ def update_preferences():
 
         user.preferences = result
 
-        updated_user_obj = user_controller.update_user(user_obj)
+        updated_user_obj = user_controller.update_user_preferences(user_obj, user.preferences)
 
         # Check if it is a valid object
         if isinstance(updated_user_obj, list):
