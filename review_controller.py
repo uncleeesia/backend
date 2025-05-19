@@ -57,7 +57,7 @@ class ReviewController():
             review_list = []
 
             # Database result processing
-            if isinstance(callToDB_result, tuple) and user_id:
+            if isinstance(callToDB_result, list) and user_id:
                 cols = ("review_id", "review_score", "service_id")
 
                 data = dict(zip(cols, callToDB_result))
