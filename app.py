@@ -305,7 +305,7 @@ def update_preferences():
         updated_user_obj = user_controller.update_user(user_obj)
 
         # Check if it is a valid object
-        if isinstance(updated_user_obj, General_user):
+        if isinstance(updated_user_obj, list):
 
             pass
 
