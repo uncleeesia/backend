@@ -64,7 +64,7 @@ class ReviewController():
 
                 review_list.append(ReviewReport.model_validate(data))
 
-            if isinstance(callToDB_result, tuple) and callToDB_result:
+            elif isinstance(callToDB_result, tuple) and callToDB_result and user_id is None:
 
                 cols = ("username", "review_id", "review_score",
                         "review_text", "by_user_id", "service_id")
@@ -73,7 +73,7 @@ class ReviewController():
 
                 review_list.append(Review.model_validate(data))
 
-            elif isinstance(callToDB_result, list) and callToDB_result:
+            elif isinstance(callToDB_result, list) and callToDB_result and user_id is None:
 
                 for s in callToDB_result:
 
