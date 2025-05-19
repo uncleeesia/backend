@@ -1,5 +1,5 @@
 # Middle layer imports
-from datetime import datetime
+import datetime
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
@@ -72,8 +72,8 @@ def post_payment():
                 "from_user_id": data.get("user_id", 123),     
                 "to_user_id": data.get("provider_id", 456),  
                 "price": service["price"],
-                "payment_timestamp": datetime.utcnow(),
-                "booking_timestamp": datetime.fromisoformat(booking_date.replace("Z", "+00:00")),
+                "payment_timestamp": datetime,
+                "booking_timestamp": datetime,
             }
 
             result = payment_controller.create_payment(payment_data)
