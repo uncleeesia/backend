@@ -270,9 +270,9 @@ def get_preferences():
 
 
 @app.route("/api/UpdatePreferences", methods=["POST"])
-def update_preferences(preferences):
+def update_preferences():
 
-    result = None
+    result = request.get_json()
 
     try:
 
@@ -300,7 +300,7 @@ def update_preferences(preferences):
 
         user = user_obj[0]
 
-        user.preferences = preferences
+        user.preferences = result
 
         updated_user_obj = user_controller.update_user(user_obj)
 
