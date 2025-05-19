@@ -44,52 +44,45 @@ def list_routes():
         })
     return jsonify(output)
 
+
 @app.route("/api/postFeedback", methods=["POST"])
 def post_feedback():
     data = request.get_json()
     # logic to update db
     return jsonify({"message": "Feedback received", "data": data}), 200
 
+
 @app.route("/api/postPayment", methods=["POST"])
 def post_payment():
     data = request.get_json()
-    
     if not data or "bookingDetails" not in data:
-        return jsonify({"error": "Invalid or missing data"}), 400
+        return "", 400
 
     booking = data["bookingDetails"]
     services = booking.get("services", [])
     booking_date = booking.get("bookingDate")
-    from_user_id = data.get("by_user_id")
-    to_user_id = data.get("to_user_id")
 
-    if not services or not booking_date or from_user_id is None or to_user_id is None:
-        return jsonify({"error": "Missing booking info"}), 400
+    if not services or not booking_date:
+        return "", 400
 
-    try:
-        created_payments = []
+    for service in services:
+        payment_data = {
+            "service_id": service.get("id"),
+            "from_user_id": data.get("by_user_id", 123),
+            "to_user_id": data.get("to_user_id", 456),
+            "price": service["price"],
+            "payment_timestamp": booking_date,
+            "booking_timestamp": booking_date,
+        }
 
-        for service in services:
-            payment_data = {
-                "service_id": service.get("id"),
-                "from_user_id": from_user_id,
-                "to_user_id": to_user_id,
-                "price": service.get("price"),
-                "payment_timestamp": booking_date,
-                "booking_timestamp": booking_date,
-            }
+        result = payment_controller.create_payment(payment_data)
 
-            result = payment_controller.create_payment(payment_data)
+        if isinstance(result, Exception):
+            print(result)
+            return "", 500
 
-            if isinstance(result, Exception):
-                return jsonify({"error": str(result)}), 400
+    return "", 200
 
-            created_payments.append(result.model_dump(mode="json"))
-
-        return jsonify({"message": "Payment received", "data": created_payments}), 200
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
 
 @app.route("/api/getPaymentMethods", methods=["GET"])
 def get_payment_methods():
@@ -97,10 +90,12 @@ def get_payment_methods():
         payment_method_list = payment_controller.extract_payment_method()
         if not isinstance(payment_method_list, list):
             raise Exception("Unable to get payment method.")
-        temp_payment_method_list = [p.model_dump(mode='json') for p in payment_method_list]
+        temp_payment_method_list = [p.model_dump(
+            mode='json') for p in payment_method_list]
         return jsonify({"paymentMethod": temp_payment_method_list}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+
 
 @app.route("/api/getAllPaymentTransactionByUserId", methods=["GET"])
 def get_all_payment_transaction_by_user_id():
@@ -744,7 +739,8 @@ def get_reviews():
             pass
         else:
             raise Exception("Invalid value for user id.")
-        review_list = review_controller.extract_review(service_id=service_id,user_id=user_id)
+        review_list = review_controller.extract_review(
+            service_id=service_id, user_id=user_id)
 
         if not isinstance(review_list, list):
             raise Exception("Unable to find review for service.")
@@ -752,7 +748,8 @@ def get_reviews():
         if len(review_list) == 0:
             result = jsonify({"message": "No reviews found."}), 200
         else:
-            temp_review_list = [review.model_dump(mode='json') for review in review_list]
+            temp_review_list = [review.model_dump(
+                mode='json') for review in review_list]
             result = jsonify({"reviews": temp_review_list}), 200
 
     except Exception as e:
@@ -760,7 +757,6 @@ def get_reviews():
 
     finally:
         return result
-
 
     # reviews = [
     #     {
