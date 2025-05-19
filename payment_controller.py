@@ -165,3 +165,67 @@ class PaymentController():
 
         finally:
             return result
+        
+    def extract_payment_for_report(self, user_id: int | None = None) -> list[PaymentReport] | Exception:
+            """"""
+
+            result = None
+
+            try:
+
+                if user_id:
+
+                    sql_command = sql.SQL("""SELECT     user_from.username, user_from.user_id, user_to.username, user_to.user_id,
+                                                        s.service_id, s.service_tags, 
+                                                        p.price, p.payment_timestamp, p.booking_timestamp
+                                            FROM {}.payment p 
+                                            INNER JOIN {}.service AS s ON s.service_id = p.service_id
+                                            INNER JOIN {}.general_user AS user_from ON p.from_user_id = user_from.user_id
+                                            INNER JOIN {}.general_user AS user_to ON p.to_user_id = user_to.user_id
+                                            WHERE p.to_user_id = %s""").format(sql.Identifier(self.schema), sql.Identifier(self.schema), sql.Identifier(self.schema), sql.Identifier(self.schema))
+                    para = (user_id,)
+
+                else:
+
+                    raise Exception("Invalid or missing arguements.")
+
+                callToDB_result = self.dbt.callToDB(sql_command, para)
+                payment_list = []
+
+                if isinstance(callToDB_result, tuple):
+
+                    cols = ("user_from_username", "user_from_user_id", "user_to_username", "user_to_user_id", "service_id", "service_tags",
+                            "price", "payment_timestamp", "booking_timestamp")
+
+                    data = dict(zip(cols, callToDB_result))
+
+                    payment_list.append(PaymentReport.model_validate(data))
+
+                elif isinstance(callToDB_result, list):
+
+                    for p in callToDB_result:
+
+                        cols = ("user_from_username", "user_from_user_id", "user_to_username", "user_to_user_id", "service_id", "service_tags",
+                                "price", "payment_timestamp", "booking_timestamp", "review_score", "by_user_id")
+
+                        data = dict(zip(cols, p))
+
+                        payment_list.append(PaymentReport.model_validate(data))
+
+                elif isinstance(callToDB_result, Exception):
+
+                    raise callToDB_result
+
+                elif isinstance(callToDB_result, str) and callToDB_result == "":
+
+                    raise Exception("Unable to find payment.")
+
+                result = payment_list
+
+            except Exception as e:
+
+                result = e
+
+            finally:
+
+                return result
