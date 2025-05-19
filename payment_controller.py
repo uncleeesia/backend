@@ -218,7 +218,8 @@ class PaymentController():
 
                 if isinstance(callToDB_result, tuple):
 
-                    cols = ("payment_method_id", "payment_method_name", "payment_method_icon")
+                    cols = ("payment_method_id", "payment_method_name",
+                            "payment_method_icon")
 
                     data = dict(zip(cols, callToDB_result))
 

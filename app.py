@@ -1,4 +1,5 @@
 # Middle layer imports
+from http.client import HTTPException
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
@@ -55,35 +56,15 @@ def post_feedback():
 #     # logic to update db
 #     return jsonify({"message": "Payment received", "data": data}), 200
 
-@app.route("/api/getPaymentMethods", methods=["GET"])
+@router.get("/api/getPaymentMethods")
 def get_payment_methods():
-    result = None
+    controller = PaymentController()
+    result = controller.extract_payment_method()
 
-    try:
+    if isinstance(result, Exception):
+        raise HTTPException(status_code=500, detail=str(result))
 
-        payment_method_list = payment_controller.extract_payment_method()
-
-        # Verify if it is a valid object
-        if isinstance(payment_method_list, list):
-
-            pass
-
-        else:
-
-            raise Exception("Unable to get payment method.")
-
-        temp_payment_method_list = [payment.model_dump(
-            mode='json') for payment in payment_method_list]
-
-        result = jsonify({"paymentMethod": temp_payment_method_list}), 200
-
-    except Exception as e:
-
-        result = jsonify({"error": str(e)}), 400
-
-    finally:
-
-        return result
+    return [pm.dict() for pm in result]
 
 @app.route("/api/getAllPaymentTransactionByUserId", methods=["GET"])
 def get_all_payment_transaction_by_user_id():
