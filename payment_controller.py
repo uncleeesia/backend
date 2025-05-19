@@ -200,48 +200,39 @@ class PaymentController():
 
             return result
 
-    def extract_payment_method(self):
-        """
-        Extract payment method from the data
-        """
+def extract_payment_method(self):
+    """
+    Extract all payment methods from the database
+    """
+    result = None
 
-        result = None
+    try:
+        sql_command = sql.SQL(
+            "SELECT payment_method_id, payment_method_name, payment_method_icon FROM {}.paymentMethod"
+        ).format(sql.Identifier(self.schema))
 
-        try:
+        callToDB_result = self.dbt.callToDB(sql_command, tuple())
 
-            if data:
+        if isinstance(callToDB_result, list):
+            # Map each row to PaymentMethod model
+            result = [
+                PaymentMethod.model_validate(dict(zip(
+                    ("payment_method_id", "payment_method_name", "payment_method_icon"),
+                    row)))
+                for row in callToDB_result
+            ]
 
-                sql_command = sql.SQL("""SELECT payment_method_id, payment_method_name, payment_method_icon FROM {}.paymentMethod""").format(
-                    sql.Identifier(self.schema))
+        elif isinstance(callToDB_result, Exception):
+            raise callToDB_result
 
-                callToDB_result = self.dbt.callToDB(sql_command, tuple())
+        elif isinstance(callToDB_result, str) and callToDB_result == "":
+            raise Exception("Unable to find payment methods.")
 
-                if isinstance(callToDB_result, list):
+        else:
+            raise Exception("Unexpected response from database.")
 
-                    cols = ("payment_method_id", "payment_method_name",
-                            "payment_method_icon")
+    except Exception as e:
+        result = e
 
-                    data = dict(zip(cols, callToDB_result))
-
-                    result = [PaymentMethod.model_validate(dict(zip(
-                        ("payment_method_id", "payment_method_name", "payment_method_icon"), row))) for row in callToDB_result]
-
-                elif isinstance(callToDB_result, Exception):
-
-                    raise callToDB_result
-
-                elif isinstance(callToDB_result, str) and callToDB_result == "":
-
-                    raise Exception("Unable to find payment.")
-
-            else:
-
-                raise Exception("Invalid or missing arguements.")
-
-        except Exception as e:
-
-            result = e
-
-        finally:
-
-            return result
+    finally:
+        return result
